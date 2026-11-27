@@ -54,7 +54,9 @@ const TABLE_MONTHS = MONTH_STARTS.length - 1;
 function startOf(monthIndex: number): number {
   const value = MONTH_STARTS[monthIndex];
   /* istanbul ignore if -- unreachable: keeps the type honest without a `!` assertion */
-  if (value === undefined) throw new RangeError(`Hijri month index out of range: ${monthIndex}`);
+  if (value === undefined) {
+    throw new RangeError(`Hijri month index out of range: ${String(monthIndex)}`);
+  }
   return value;
 }
 
