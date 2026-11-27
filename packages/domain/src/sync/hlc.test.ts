@@ -167,7 +167,9 @@ describe('simulation: last writer wins converges (spec 8.8)', () => {
   it('two devices that exchange everything end with identical records', () => {
     for (let seed = 1; seed <= 200; seed++) {
       const next = seeded(seed * 7);
-      const stores: Map<string, Row>[] = [new Map(), new Map()];
+      const storeA = new Map<string, Row>();
+      const storeB = new Map<string, Row>();
+      const stores = [storeA, storeB];
       const states: HlcState[] = [
         { millis: 0, counter: 0 },
         { millis: 0, counter: 0 },
@@ -203,11 +205,11 @@ describe('simulation: last writer wins converges (spec 8.8)', () => {
         log.push({ key, row });
       }
       // Deliver every change to both devices, in different orders.
-      for (const { key, row } of log) apply(stores[0] ?? new Map(), key, row);
-      for (const { key, row } of [...log].reverse()) apply(stores[1] ?? new Map(), key, row);
-      const byKey = (store: Map<string, Row> | undefined): [string, Row][] =>
-        [...(store ?? new Map<string, Row>()).entries()].sort(([a], [b]) => a.localeCompare(b));
-      expect(byKey(stores[0])).toEqual(byKey(stores[1]));
+      for (const { key, row } of log) apply(storeA, key, row);
+      for (const { key, row } of [...log].reverse()) apply(storeB, key, row);
+      const byKey = (store: Map<string, Row>): [string, Row][] =>
+        [...store.entries()].sort(([a], [b]) => a.localeCompare(b));
+      expect(byKey(storeA)).toEqual(byKey(storeB));
     }
   });
 });
