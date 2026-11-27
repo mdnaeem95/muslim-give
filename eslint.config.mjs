@@ -60,5 +60,10 @@ export default defineConfig(
     files: ['packages/domain/src/dates/civil-date.ts'],
     rules: { 'no-restricted-syntax': 'off' },
   },
+  {
+    // Build-time generator and the ICU oracle test legitimately use Date to talk to Intl.
+    files: ['packages/domain/scripts/**', '**/*.oracle.test.ts'],
+    rules: { 'no-restricted-syntax': 'off' },
+  },
   { files: ['**/*.mjs'], extends: [tseslint.configs.disableTypeChecked] },
 );
