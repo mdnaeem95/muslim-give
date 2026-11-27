@@ -47,8 +47,9 @@ export const donationDescriptionShape = {
   note: boundedText(LIMITS.note, 'donation.note_too_long').nullable(),
 } as const;
 
-const descriptionObject = z.strictObject(donationDescriptionShape);
-export type DonationDescription = z.infer<typeof descriptionObject>;
+export type DonationDescription = z.infer<
+  z.ZodObject<typeof donationDescriptionShape, z.core.$strict>
+>;
 
 /** The relationship selectors, shared by donations, reminders and Eid people (R-REL). */
 export interface RelationshipFacts {
