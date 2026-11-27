@@ -6,11 +6,18 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "dependencies": {
-    "@muslim-give/domain": "workspace:*"
+    "@muslim-give/domain": "workspace:*",
+    "zod": "4.6.7"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json",
     "lint": "eslint .",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest --coverage --json --outputFile=coverage/test-results.json"
+  },
+  "devDependencies": {
+    "@types/jest": "30.0.0",
+    "jest": "30.5.2",
+    "ts-jest": "29.4.15",
+    "typescript": "5.9"
   }
 }
