@@ -43,8 +43,8 @@ export function parseCivilDate(text: string): Result<CivilDate, DateError> {
   return ok(text as CivilDate);
 }
 
-/** Unchecked constructor for values already known to be valid. */
-function make(year: number, month: number, day: number): CivilDate {
+/** Unchecked constructor: callers guarantee a real date (validated parts or table output). */
+export function makeCivilDate(year: number, month: number, day: number): CivilDate {
   return `${pad(year, 4)}-${pad(month, 2)}-${pad(day, 2)}` as CivilDate;
 }
 
@@ -66,7 +66,7 @@ export function toEpochDay(date: CivilDate): number {
 
 export function fromEpochDay(epochDay: number): CivilDate {
   const d = new Date(epochDay * MS_PER_DAY);
-  return make(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate());
+  return makeCivilDate(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate());
 }
 
 export function addDays(date: CivilDate, days: number): CivilDate {
@@ -100,5 +100,5 @@ export function parseMonthDay(text: string): Result<MonthDay, DateError> {
 export function monthDayInYear(monthDay: MonthDay, year: number): CivilDate {
   const month = Number(monthDay.slice(0, 2));
   const day = Number(monthDay.slice(3, 5));
-  return make(year, month, Math.min(day, daysInMonth(year, month)));
+  return makeCivilDate(year, month, Math.min(day, daysInMonth(year, month)));
 }
