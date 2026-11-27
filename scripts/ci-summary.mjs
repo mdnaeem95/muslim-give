@@ -2,12 +2,19 @@
 // is its own evidence record (docs/evidence/README.md).
 import { appendFileSync, existsSync, readFileSync } from 'node:fs';
 
-const packages = ['domain', 'ui-tokens', 'schema', 'local-db', 'observability'];
+const packages = [
+  'packages/domain',
+  'packages/ui-tokens',
+  'packages/schema',
+  'packages/local-db',
+  'packages/observability',
+  'apps/mobile',
+];
 const lines = ['### Test evidence', ''];
 
 for (const name of packages) {
-  const dir = `packages/${name}/coverage`;
-  lines.push(`#### packages/${name}`, '');
+  const dir = `${name}/coverage`;
+  lines.push(`#### ${name}`, '');
 
   const resultsPath = `${dir}/test-results.json`;
   if (existsSync(resultsPath)) {

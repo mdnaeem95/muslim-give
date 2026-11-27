@@ -38,4 +38,5 @@ jobs:
             packages/schema/coverage
             packages/local-db/coverage
             packages/observability/coverage
+            apps/mobile/coverage
           retention-days: 90
