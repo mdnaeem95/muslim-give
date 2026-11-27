@@ -129,3 +129,14 @@ Issues found and fixed while closing the PR: three strict lint rules (`prefer-op
 - Manual or device checks: none
 - Not verified, and why: ESLint was not run locally; the data layer that applies the fixes and the pulled documents (and writes them through the outbox rules) is not built yet, so the property test uses a stand-in `applyFixes` that lives in the test file
 - Spec or docs updated: none needed
+
+## PR #12: redacting logger and Sentry scrubber (`packages/observability`)
+
+- Requirement or rule IDs: spec 18.1 (logging only through the redacting logger), 20.1 (Sentry allow-list, "a unit test asserts no event carries a field outside the allow-list"), threat T8 (personal data in logs and crash reports)
+- CI run: PR #12 checks (copy the numbers from the "Test evidence" summary at merge)
+- Tests: 25 in `packages/observability`, counted from the local run before CI
+- Coverage: 100% statements, branches, functions and lines in the local run; the Jest threshold enforces it in CI
+- What the tests prove: log fields not on the allow-list (amounts, names, notes, emails, income, receipt names, record IDs, even `constructor`) are dropped and counted, and their names and values appear nowhere in the output; allowed fields with wrong values (free text, unknown provider, out-of-range numbers) are dropped too; an event name that is not a stable code is replaced; an error is logged by its code only, never its message; the Sentry scrubber removes message, user, request, extra, local variables, source lines, free-text exception values, free-text breadcrumb messages and unrecognised context fields, and every key left in a deliberately hostile event is on the allow-list; ten strings standing in for personal data (amount, name, mosque, email, note, receipt name, record ID, IP address, URL) do not appear anywhere in the scrubbed event
+- Manual or device checks: none. Sentry itself is not wired in; the scrubber is tested on plain objects shaped like Sentry events, not on events from the real SDK.
+- Not verified, and why: ESLint was not run locally; the real Sentry event shape may carry fields this allow-list drops, which is the safe direction, but the first device build should be checked to confirm crash reports still contain a usable stack trace and release; product analytics are not built because decision D-18 is open
+- Spec or docs updated: ADR 011 added; spec 6.1 should show `packages/observability` (not done in this PR)
