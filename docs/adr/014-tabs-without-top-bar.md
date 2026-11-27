@@ -17,3 +17,7 @@ The first simulator run (PR #13 build) showed two problems. At the largest syste
 
 - Tab labels in the bar do not grow with the text size in the first simulator run. This is left as it is until it is judged on a real device, since bottom bars commonly stay fixed.
 - Dark mode is still not offered (spec 6.5, `userInterfaceStyle: light`).
+
+## Addendum: `apps/mobile/tsconfig.json`
+
+Expo's CLI rewrites this file whenever the app is started (it expands every array onto separate lines and drops the unused `.expo/types` entry). The file is therefore committed in the form Expo writes and is listed in `.prettierignore`, so `pnpm verify` does not fail after a local run.

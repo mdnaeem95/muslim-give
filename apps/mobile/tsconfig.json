@@ -3,7 +3,14 @@
   "compilerOptions": {
     "jsx": "react-native",
     "resolveJsonModule": true,
-    "types": ["jest", "node"]
+    "types": [
+      "jest",
+      "node"
+    ]
   },
-  "include": ["app", "src", "app.config.ts", ".expo/types/**/*.ts"]
+  "include": [
+    "app",
+    "src",
+    "app.config.ts"
+  ]
 }
