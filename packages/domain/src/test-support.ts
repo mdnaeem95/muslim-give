@@ -7,7 +7,8 @@ import {
 } from './dates/civil-date.js';
 import { parseInstant, type Instant } from './dates/instant.js';
 import { parseMonthKey } from './dates/month-key.js';
-import type { DonationSource, LedgerEntry } from './ledger.js';
+import type { DonationSource } from './codes.js';
+import type { LedgerEntry } from './ledger.js';
 
 /** Test fixtures only; excluded from coverage and never exported from the package. */
 function must<T>(result: { ok: true; value: T } | { ok: false }, what: string): T {
