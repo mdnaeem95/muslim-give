@@ -38,7 +38,7 @@ const count = (table: string): number =>
 describe('migrations', () => {
   it('create exactly the tables the Drizzle schema defines', () => {
     const defined = Object.values(schema)
-      .filter((value): value is SQLiteTable => is(value, SQLiteTable))
+      .filter((value) => is(value, SQLiteTable))
       .map((table) => getTableName(table))
       .sort();
     const created = db
