@@ -35,9 +35,11 @@ describe('spec 6.5 and 6.6 layout', () => {
   });
   it('makes every control meet the platform touch target', () => {
     expect(minTouchTarget).toEqual({ ios: 44, android: 48 });
-    expect(controlHeight.input >= minTouchTarget.android).toBe(true);
-    expect(controlHeight.button >= minTouchTarget.android).toBe(true);
-    expect(controlHeight.smallButton >= minTouchTarget.ios).toBe(true);
+    // Widened to `number` so the comparison is a real check, not a constant.
+    const atLeast = (value: number, minimum: number): boolean => value >= minimum;
+    expect(atLeast(controlHeight.input, minTouchTarget.android)).toBe(true);
+    expect(atLeast(controlHeight.button, minTouchTarget.android)).toBe(true);
+    expect(atLeast(controlHeight.smallButton, minTouchTarget.ios)).toBe(true);
   });
 });
 
