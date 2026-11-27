@@ -163,3 +163,15 @@ Issues found and fixed while closing the PR: three strict lint rules (`prefer-op
 - Manual or device checks: none done by the author of this PR. To run: build on a phone, confirm the app opens and the "Opening your records" text is brief; then add a throwaway migration that fails, confirm the app shows the failure screen and a relaunch with the migration removed still opens with the data intact; downgrade check: run a build with fewer migrations and confirm "Please update the app"
 - Not verified, and why: `expo-sqlite` calls (`openDatabaseAsync`, `backupDatabaseSync`, `deleteDatabaseAsync`, `getAllSync`) and the provider were not run (no network installs, no device); restoring through the backup API on a real device is untested; ESLint was not run locally
 - Spec or docs updated: ADR 013 added; spec 7.7 should say the runner is ours and not Drizzle's migrator
+
+## PR #15: tab icons, no top bar, safe-area screen
+
+- Requirement or rule IDs: spec 6.4 (five tabs), 6.6 (text scales to 200% without loss), ADR 014
+- CI run: PR #15 checks (copy the numbers from the "Test evidence" summary at merge)
+- Tests: 3 new in `apps/mobile/src/lib` (tab definitions), counted from the local run before CI
+- Coverage: the Jest threshold enforces 100% on `src/lib` in CI
+- What the tests prove: the five tabs are in the specified order; every tab has label and accessibility copy in the catalog; each tab has a distinct icon on iOS and on Android
+- Evidence from the simulator, before this PR: at the largest system text size the top bar title was clipped ("Profile" cut off at the top), the tab icons were placeholder shapes, and dark mode did not apply because the app is locked to light. The first two are what this PR fixes.
+- Manual or device checks: author's check on the simulator. Open each of the five tabs at the default and at the largest text size (`xcrun simctl ui booted content_size accessibility-extra-extra-extra-large`) and confirm: five different icons, no cut-off heading, content clear of the status bar and the notch. Repeat on Android.
+- Not verified, and why: the `expo-symbols` types and names (SF Symbol and Material Symbol names are checked by `tsc` only on the author's machine), and nothing was run in a simulator or on Android; ESLint was not run locally
+- Spec or docs updated: ADR 014 added
