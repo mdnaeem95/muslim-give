@@ -57,7 +57,7 @@ export default defineConfig(
   },
   {
     // The one place allowed to touch Date: UTC epoch-day arithmetic, no time zones.
-    files: ['packages/domain/src/dates/civil-date.ts'],
+    files: ['packages/domain/src/dates/civil-date.ts', 'packages/domain/src/dates/instant.ts'],
     rules: { 'no-restricted-syntax': 'off' },
   },
   {

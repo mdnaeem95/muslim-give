@@ -19,3 +19,13 @@ export function parseInstant(text: string): Result<Instant, DateError> {
 export function elapsedDays(from: Instant, to: Instant): number {
   return (Date.parse(to) - Date.parse(from)) / MS_PER_DAY;
 }
+
+/** Milliseconds since the Unix epoch. */
+export const instantMillis = (at: Instant): number => Date.parse(at);
+
+/** The instant `millis` after `at`; negative moves back. Fails if the result is out of range. */
+export function addMillis(at: Instant, millis: number): Result<Instant, DateError> {
+  const moved = new Date(Date.parse(at) + millis);
+  if (Number.isNaN(moved.getTime())) return err({ code: 'date.invalid' });
+  return parseInstant(moved.toISOString());
+}
