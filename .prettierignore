@@ -2,3 +2,4 @@ docs/technical-spec.md
 pnpm-lock.yaml
 coverage/
 packages/domain/src/hijri/umalqura-data.ts
+packages/local-db/migrations/meta
