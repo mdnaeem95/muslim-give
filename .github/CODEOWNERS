@@ -1,0 +1,5 @@
+# Spec 18.2: two approvals are enforced by branch protection for these paths.
+* @mdnaeem95
+/packages/domain/ @mdnaeem95
+/firebase/ @mdnaeem95
+/functions/ @mdnaeem95
