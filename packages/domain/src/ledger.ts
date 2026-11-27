@@ -3,12 +3,7 @@ import type { Money } from './money/money.js';
 
 /** Spec 7.4: where a donation came from. */
 export type DonationSource =
-  | 'manual'
-  | 'recurring'
-  | 'eid_person'
-  | 'eid_packet'
-  | 'repeat_friday'
-  | 'reminder';
+  'manual' | 'recurring' | 'eid_person' | 'eid_packet' | 'repeat_friday' | 'reminder';
 
 /** The facts the rules need from a live (not deleted) donation. */
 export interface LedgerEntry {
