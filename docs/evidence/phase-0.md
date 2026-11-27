@@ -151,3 +151,15 @@ Issues found and fixed while closing the PR: three strict lint rules (`prefer-op
 - Manual or device checks: none done by the author of this PR. To run: `pnpm --filter @muslim-give/mobile bundle:check`, then a development build on one iPhone and one Android phone, and confirm the five tabs, the Dashboard showing today's Gregorian and Hijri date, and the accessibility labels with VoiceOver and TalkBack.
 - Not verified, and why: nothing here was run through Metro, a simulator or a phone (no network installs in the sandbox), so the Metro `.js` resolution, Expo Router wiring and the tab layout are untested; ESLint was not run locally; app icon, splash and Noto Sans are not bundled; component tests are not set up
 - Spec or docs updated: ADR 012 added; spec 6.4 (native tabs) and 6.1 (`packages/observability`, `packages/local-db`) should be updated in the Doc
+
+## PR #14: database wiring and the migration runner
+
+- Requirement or rule IDs: spec 7.7 (migrations run before the first screen, backup first, restore on failure, newer database refused), 6.3 (expected failures are values), 18.1 (only codes logged), ADR 013
+- CI run: PR #14 checks (copy the numbers from the "Test evidence" summary at merge)
+- Tests: 12 new in `packages/local-db` (runner and generated module), 5 new in `apps/mobile/src/lib` (executor), counted from the local run before CI
+- Coverage: 100% on the new files in the local run; the Jest threshold enforces it in CI
+- What the tests prove: a fresh database gets every migration and no backup; a second run does nothing; an upgrade backs up at the current version and applies only the pending ones; a failing migration rolls back everything from that run (including earlier migrations in the same run) and restores the backup; a failed backup leaves the database untouched; a failed restore is reported as its own error; a database from a newer app and a history that does not match are refused untouched; the real checked-in migrations build the same schema through the runner as through plain execution; the generated module equals the SQL files; the executor uses BEGIN/COMMIT at the top level and savepoints inside, and an inner failure does not stop the outer transaction
+- Bug caught by the tests: a database from a newer app was first reported as a history mismatch; the prefix check now compares only the overlap
+- Manual or device checks: none done by the author of this PR. To run: build on a phone, confirm the app opens and the "Opening your records" text is brief; then add a throwaway migration that fails, confirm the app shows the failure screen and a relaunch with the migration removed still opens with the data intact; downgrade check: run a build with fewer migrations and confirm "Please update the app"
+- Not verified, and why: `expo-sqlite` calls (`openDatabaseAsync`, `backupDatabaseSync`, `deleteDatabaseAsync`, `getAllSync`) and the provider were not run (no network installs, no device); restoring through the backup API on a real device is untested; ESLint was not run locally
+- Spec or docs updated: ADR 013 added; spec 7.7 should say the runner is ours and not Drizzle's migrator

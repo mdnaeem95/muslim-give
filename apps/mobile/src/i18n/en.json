@@ -12,5 +12,10 @@
   "dashboard.today": "Today",
   "placeholder.coming": "This screen is built in a later phase.",
   "error.title": "Something went wrong. Your records are safe.",
-  "error.retry": "Try again"
+  "error.retry": "Try again",
+  "db.opening": "Opening your records…",
+  "db.failed.title": "We couldn't open your records.",
+  "db.failed.body": "Nothing has been lost. Close the app and open it again. If this keeps happening, please contact support.",
+  "db.newer.title": "Please update the app.",
+  "db.newer.body": "Your records were saved by a newer version of Muslim Give. Update the app to open them."
 }

@@ -10,6 +10,7 @@ export default {
     '!src/**/*.test.ts',
     '!src/test-support.ts',
     '!src/index.ts',
+    '!src/migrations.generated.ts',
   ],
   coverageReporters: ['text', 'json-summary', 'lcov'],
   // Spec phase 0 gate: domain at 100% branch coverage.

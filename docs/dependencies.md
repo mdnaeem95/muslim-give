@@ -12,6 +12,7 @@ Every dependency needs an entry (spec 18.4): need, maintenance, New Architecture
 | @types/node                                                               | local-db dev | Types for `node:sqlite` in tests                            | MIT        |
 | expo, expo-router, expo-status-bar, expo-linking, expo-constants          | mobile       | App framework and file-based navigation (spec 5.2, ADR 001) | MIT        |
 | react, react-native, react-native-screens, react-native-safe-area-context | mobile       | UI runtime; New Architecture only                           | MIT        |
+| expo-sqlite                                                               | mobile       | Local database on the device (spec 7.7, ADR 013)            | MIT        |
 | @types/react, @types/node                                                 | mobile dev   | Types for components and `app.config.ts`                    | MIT        |
 | fast-check                                                                | domain dev   | Property tests (spec 17)                                    | MIT        |
 | prettier                                                                  | root dev     | Formatting                                                  | MIT        |
