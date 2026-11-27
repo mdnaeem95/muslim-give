@@ -14,3 +14,5 @@ export * from './reminders.js';
 export * from './friday.js';
 export * from './eid.js';
 export * from './account-prompt.js';
+export * from './sync/hlc.js';
+export * from './sync/ids.js';
