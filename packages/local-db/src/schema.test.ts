@@ -7,7 +7,7 @@ import {
   RELATIONSHIPS,
 } from '@muslim-give/domain';
 import { getTableName, is } from 'drizzle-orm';
-import { SQLiteTable } from 'drizzle-orm/sqlite-core';
+import { getTableConfig, SQLiteTable } from 'drizzle-orm/sqlite-core';
 import * as schema from './schema/index.js';
 import {
   donationRow,
@@ -40,18 +40,28 @@ const rejects = (
 const count = (table: string): number =>
   Number(db.prepare(`select count(*) as n from "${table}"`).all()[0]?.n);
 
+const definedTables = Object.values(schema).filter((value) => is(value, SQLiteTable));
+
 describe('migrations', () => {
   it('create exactly the tables the Drizzle schema defines', () => {
-    const defined = Object.values(schema)
-      .filter((value) => is(value, SQLiteTable))
-      .map((table) => getTableName(table))
-      .sort();
+    const defined = definedTables.map((table) => getTableName(table)).sort();
     const created = db
       .prepare("select name from sqlite_master where type = 'table' and name not like 'sqlite_%'")
       .all()
       .map((row) => String(row.name))
       .sort();
     expect(created).toEqual(defined);
+  });
+  it('define their constraints and indexes in the schema, so drizzle-kit can generate them', () => {
+    // The constraint callbacks run lazily; reading the config is what runs them.
+    const configs = definedTables.map((table) => getTableConfig(table));
+    const withChecks = configs.filter((config) => config.checks.length > 0);
+    expect(withChecks.length).toBeGreaterThan(10);
+    expect(configs.some((config) => config.indexes.length > 0)).toBe(true);
+    // Foreign keys are also resolved lazily; resolving them proves every reference points somewhere.
+    const foreignKeys = configs.flatMap((config) => config.foreignKeys);
+    expect(foreignKeys.length).toBeGreaterThan(5);
+    for (const foreignKey of foreignKeys) foreignKey.reference();
   });
   it('create every table in spec 7.5', () => {
     const names = db

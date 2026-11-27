@@ -10,7 +10,8 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "verify": "pnpm format:check && pnpm typecheck && pnpm lint && pnpm test"
   },
   "devDependencies": {
     "@commitlint/cli": "21.2.4",
