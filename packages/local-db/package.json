@@ -1,0 +1,18 @@
+{
+  "name": "@muslim-give/local-db",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@muslim-give/domain": "workspace:*",
+    "@muslim-give/schema": "workspace:*"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint .",
+    "generate": "drizzle-kit generate",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --coverage --json --outputFile=coverage/test-results.json"
+  }
+}
