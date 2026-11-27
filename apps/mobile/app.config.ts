@@ -13,11 +13,12 @@ const ENVIRONMENTS = {
 
 type AppEnvironment = keyof typeof ENVIRONMENTS;
 
-const isEnvironment = (value: string | undefined): value is AppEnvironment =>
+const isEnvironment = (value: unknown): value is AppEnvironment =>
   value === 'staging' || value === 'production';
 
 export default ({ config }: ConfigContext): ExpoConfig => {
-  const requested = process.env.APP_ENV;
+  // Typed `unknown`: the environment's own typing is looser than it looks.
+  const requested: unknown = process.env.APP_ENV;
   const environment: AppEnvironment = isEnvironment(requested) ? requested : 'development';
   const { id, name } = ENVIRONMENTS[environment];
   return {
