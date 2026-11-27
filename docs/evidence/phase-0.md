@@ -73,3 +73,14 @@ Issues found and fixed while closing the PR: three strict lint rules (`prefer-op
 - Not verified, and why: ESLint and the pinned Prettier were not run on this package locally; dark mode values are new (the prototype has none) and need a design review before dark mode is enabled; the package's test dependencies and lockfile need the author's `pnpm add` step
 - Finding: the prototype's green text on its light-green tint is 3.95:1, below AA, so the `primaryText` token uses the dark green for text
 - Spec or docs updated: none needed
+
+## PR #6: shared vocabulary, relationship rules and input schemas
+
+- Requirement or rule IDs: R-REL (relationship selectors, spouse hidden for single users, in-law labels), R-MON (integer minor units), R-REC-02, R-YR, R-EID-04 and R-EID-07 input validation, spec 7.5 (profile and prompt state), spec 10.1 (Log Donation validation)
+- CI run: PR #6 checks (the "Test evidence" summary now lists three packages; copy the numbers here at merge)
+- Tests: 35 passed in `packages/schema` plus new relationship tests in `packages/domain`, counted from the local run before CI
+- Coverage: 100% statements, branches, functions and lines in `packages/schema` in the local run; the Jest threshold enforces it in CI
+- What the tests prove: every cross-field donation rule is rejected with a stable error code (mosque and charity names, relationship only for individuals, side and line only where they apply, spouse options hidden for single or unset users, Others-only free text, on-behalf name rules); dates cannot be in the future; amounts are positive integers; unknown fields are rejected; monthly giving allows days 1 to 31 and no future start month; Eid people exclude Stranger; packet counts stay between 0 and 999
+- Manual or device checks: none (no UI yet)
+- Not verified, and why: the schemas were run here against zod 3.25's `zod/v4` build, not the pinned zod 4 release, and ESLint and the pinned Prettier were not run locally, so CI is the first real run; the package's dependencies and lockfile need the author's `pnpm add` step
+- Spec or docs updated: none needed

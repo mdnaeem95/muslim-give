@@ -35,4 +35,5 @@ jobs:
           path: |
             packages/domain/coverage
             packages/ui-tokens/coverage
+            packages/schema/coverage
           retention-days: 90

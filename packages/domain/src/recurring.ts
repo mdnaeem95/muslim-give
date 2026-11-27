@@ -1,9 +1,7 @@
+import type { RecurringMode, RecurringStatus } from './codes.js';
 import { monthKeyOf, type CivilDate, type MonthKey } from './dates/civil-date.js';
 import { addMonths, dueDateIn, monthsInclusive } from './dates/month-key.js';
 import { sumByCurrency, type CurrencyTotal } from './totals.js';
-
-export type RecurringMode = 'auto' | 'confirm';
-export type RecurringStatus = 'active' | 'paused' | 'stopped';
 
 export interface RecurringRule {
   readonly id: string;
