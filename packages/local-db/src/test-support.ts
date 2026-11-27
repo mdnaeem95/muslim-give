@@ -1,3 +1,4 @@
+import type { SqlExecutor } from './executor.js';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -96,4 +97,35 @@ export function failureOf(action: () => void): string {
     return error instanceof Error ? error.message : String(error);
   }
   return 'accepted';
+}
+
+/**
+ * A SqlExecutor over an in-memory database with every migration applied, for outbox and
+ * repository tests. Nested transactions use savepoints, as the app's adapter must.
+ */
+export function openExecutor(): { readonly db: TestDb; readonly executor: SqlExecutor } {
+  const db = openMigratedDb();
+  let depth = 0;
+  const executor: SqlExecutor = {
+    run: (sql, params = []) => {
+      db.prepare(sql).run(...params);
+    },
+    all: (sql, params = []) => db.prepare(sql).all(...params),
+    transaction: (work) => {
+      const name = `sp_${String(depth)}`;
+      db.exec(depth === 0 ? 'BEGIN IMMEDIATE' : `SAVEPOINT ${name}`);
+      depth++;
+      try {
+        const result = work();
+        depth--;
+        db.exec(depth === 0 ? 'COMMIT' : `RELEASE ${name}`);
+        return result;
+      } catch (error) {
+        depth--;
+        db.exec(depth === 0 ? 'ROLLBACK' : `ROLLBACK TO ${name}; RELEASE ${name}`);
+        throw error;
+      }
+    },
+  };
+  return { db, executor };
 }

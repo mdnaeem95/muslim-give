@@ -106,3 +106,15 @@ Issues found and fixed while closing the PR: three strict lint rules (`prefer-op
 - Manual or device checks: none
 - Not verified, and why: ESLint was not run locally (no `typescript-eslint` in the sandbox); the simulations are seeded loops, not the 10,000-run `fast-check` property test in spec 8.8, which belongs with the sync engine; secure random bytes and the clock come from the app and are not built yet
 - Spec or docs updated: none needed
+
+## PR #10: the outbox
+
+- Requirement or rule IDs: spec 8.2 (outbox, coalescing, same-transaction writes), 8.3 (batch size 400, backoff 2 s to 15 min with jitter, permanent errors never block other rows), 8.7 (sign-out needs an empty outbox)
+- CI run: PR #10 checks (copy the numbers from the "Test evidence" summary at merge)
+- Tests: 23 new in `packages/local-db` (outbox), 6 new in `packages/domain` (backoff, instant arithmetic), counted from the local run before CI
+- Coverage: 100% on the new files in the local run; the Jest threshold enforces it in CI
+- What the tests prove: ten edits to one record leave one queued row; a record change and its outbox row commit or roll back together, including when nested inside a larger transaction; a row replaced by a newer edit while its older version is uploading is not removed by the old acknowledgement; retries wait 2, 4, 8 s and so on, never more than 15 minutes, with jitter between half and all of each delay; a backed-off row is hidden until due; a parked row stays in the outbox, is never offered again, and does not stop other rows; a corrupt database row raises an error instead of being guessed at
+- Manual or device checks: none. Tests run on Node's SQLite, not `expo-sqlite`.
+- Not verified, and why: the app's `expo-sqlite` adapter for `SqlExecutor` is not built, and its transaction and savepoint behaviour must be checked on a device; ESLint was not run locally
+- Note: permanent failures are parked with a far-future retry time (`PARKED_UNTIL`) instead of a new column, so no migration is needed. If a separate flag is preferred, it is a one-column migration.
+- Spec or docs updated: none needed
