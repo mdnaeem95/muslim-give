@@ -32,5 +32,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-evidence
-          path: packages/domain/coverage
+          path: |
+            packages/domain/coverage
+            packages/ui-tokens/coverage
           retention-days: 90

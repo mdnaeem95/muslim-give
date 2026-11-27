@@ -48,6 +48,21 @@ importers:
         specifier: '5.9'
         version: 5.9.3
 
+  packages/ui-tokens:
+    devDependencies:
+      '@types/jest':
+        specifier: 30.0.0
+        version: 30.0.0
+      jest:
+        specifier: 30.5.2
+        version: 30.5.2(@types/node@26.6.11)
+      ts-jest:
+        specifier: 29.4.15
+        version: 29.4.15(@babel/core@7.29.13)(@jest/transform@30.5.2)(@jest/types@30.5.1)(babel-jest@30.5.2(@babel/core@7.29.13))(jest-util@30.5.1)(jest@30.5.2(@types/node@26.6.11))(typescript@5.9.3)
+      typescript:
+        specifier: '5.9'
+        version: 5.9.3
+
 packages:
 
   '@babel/code-frame@7.29.7':

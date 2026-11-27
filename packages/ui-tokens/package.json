@@ -1,0 +1,19 @@
+{
+  "name": "@muslim-give/ui-tokens",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint .",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --coverage --json --outputFile=coverage/test-results.json"
+  },
+  "devDependencies": {
+    "@types/jest": "30.0.0",
+    "jest": "30.5.2",
+    "ts-jest": "29.4.15",
+    "typescript": "5.9"
+  }
+}

@@ -9,7 +9,8 @@ Gate (spec 21): CI green on both platforms; domain at 100% branch coverage; Hijr
 - [x] Hijri oracle test passing (PR #2)
 - [ ] Development build on one iPhone and one Android phone (Expo app not yet created)
 - [x] Domain rules: money, dates, Hijri, totals, budget, recurring, reminders, Friday, Eid, account prompt (PRs #1, #2, #4)
-- [ ] Remaining Phase 0 scope: SQLite schema v1 with migrations; outbox; logger; Sentry; design tokens; core components; Firebase projects; EAS set-up
+- [x] Design tokens with contrast checks (PR #5)
+- [ ] Remaining Phase 0 scope: SQLite schema v1 with migrations; outbox; logger; Sentry; core components; Firebase projects; EAS set-up
 
 Phase sign-off: not yet.
 
@@ -59,4 +60,16 @@ Issues found and fixed while closing the PR: three strict lint rules (`prefer-op
 - What the tests prove: money totals never mix currencies; overseas is derived from the current home country; Eid Planner entries stay out of monthly budget spend; budget levels use exact integer maths at the 80%, 100% and over boundaries; monthly giving generates each due month once (running twice or after a sync adds nothing), clamps day 31 to short months, and treats 29 February correctly; reminders repeat on the Gregorian month-day with the 29 February rule and list the next 7 days soonest first; the Friday card and repeat gift follow the exclusions; the Eid plan adds up, reads "given" back from the log, and packet counters stop at the count; the account prompt asks at 5 entries, then at 15 entries or 14 days, then never, and defers behind a modal
 - Manual or device checks: none (no UI yet)
 - Not verified, and why: ESLint and the pinned Prettier were not run locally (no network installs here), so CI is the first lint run; six interpretations of ambiguous spec wording are listed in the PR description and await sign-off; Eid person and packet transactions and export belong with the data layer
+- Spec or docs updated: none needed
+
+## PR #5: design tokens with WCAG AA contrast checks
+
+- Requirement or rule IDs: spec 6.5 (design system tokens, colour never the only signal, contrast test), 6.6 (touch targets, dynamic type limit), R-BUD-03 (meter colours)
+- CI run: PR #5 checks (the "Test evidence" summary now lists both packages; copy the numbers here at merge)
+- Tests: 46 passed in `packages/ui-tokens`, counted from the local run before CI
+- Coverage: 100% on every source file in the local run
+- What the tests prove: the light palette uses the prototype's exact hex values; light and dark define the same tokens; all 17 text pairings meet WCAG AA (4.5:1) in both modes (34 checks); the contrast maths matches the published 4.54:1 reference; the type scale, weights, spacing grid, square corners and touch targets match the spec
+- Manual or device checks: none (no UI yet). Contrast is computed, not eyeballed, but real-device readability in sunlight is not yet checked.
+- Not verified, and why: ESLint and the pinned Prettier were not run on this package locally; dark mode values are new (the prototype has none) and need a design review before dark mode is enabled; the package's test dependencies and lockfile need the author's `pnpm add` step
+- Finding: the prototype's green text on its light-green tint is 3.95:1, below AA, so the `primaryText` token uses the dark green for text
 - Spec or docs updated: none needed
