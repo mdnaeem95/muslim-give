@@ -24,16 +24,21 @@ beforeEach(() => {
   db = openMigratedDb();
 });
 
+const attempt = (table: string, row: Record<string, string | number | null>): string =>
+  failureOf(() => {
+    insert(db, table, row);
+  });
+
 const rejects = (
   table: string,
   row: Record<string, string | number | null>,
   constraint: string,
 ): void => {
-  expect(failureOf(() => insert(db, table, row))).toContain(constraint);
+  expect(attempt(table, row)).toContain(constraint);
 };
 
 const count = (table: string): number =>
-  Number(db.prepare(`select count(*) as n from "${table}"`).all()[0]?.['n']);
+  Number(db.prepare(`select count(*) as n from "${table}"`).all()[0]?.n);
 
 describe('migrations', () => {
   it('create exactly the tables the Drizzle schema defines', () => {
@@ -44,7 +49,7 @@ describe('migrations', () => {
     const created = db
       .prepare("select name from sqlite_master where type = 'table' and name not like 'sqlite_%'")
       .all()
-      .map((row) => String(row['name']))
+      .map((row) => String(row.name))
       .sort();
     expect(created).toEqual(defined);
   });
@@ -52,7 +57,7 @@ describe('migrations', () => {
     const names = db
       .prepare("select name from sqlite_master where type = 'table' and name not like 'sqlite_%'")
       .all()
-      .map((row) => String(row['name']))
+      .map((row) => String(row.name))
       .sort();
     expect(names).toEqual(
       [
@@ -163,7 +168,7 @@ describe('donations: the database refuses what the domain refuses', () => {
       donationRow('x', { recurring_rule_id: 'r1' }),
       'donations_occurrence_pair',
     );
-    expect(failureOf(() => insert(db, 'donations', donationRow('dup', link)))).toContain('UNIQUE');
+    expect(attempt('donations', donationRow('dup', link))).toContain('UNIQUE');
     insert(db, 'donations', donationRow('ok', { ...link, occurrence_month: '2027-04' }));
   });
   it('allows many gifts without a rule', () => {
@@ -252,9 +257,7 @@ describe('monthly giving (R-REC)', () => {
       ...over,
     });
     insert(db, 'recurring_occurrences', occurrence('occ_r1_2027-03'));
-    expect(failureOf(() => insert(db, 'recurring_occurrences', occurrence('again')))).toContain(
-      'UNIQUE',
-    );
+    expect(attempt('recurring_occurrences', occurrence('again'))).toContain('UNIQUE');
     insert(db, 'recurring_occurrences', occurrence('occ_r1_2027-04', { month: '2027-04' }));
     rejects(
       'recurring_occurrences',
@@ -304,7 +307,7 @@ describe('Eid Planner (R-EID)', () => {
   });
   it('has one plan per year', () => {
     insert(db, 'eid_plans', plan('p1', 2027));
-    expect(failureOf(() => insert(db, 'eid_plans', plan('p2', 2027)))).toContain('UNIQUE');
+    expect(attempt('eid_plans', plan('p2', 2027))).toContain('UNIQUE');
     insert(db, 'eid_plans', plan('p3', 2028));
     rejects('eid_plans', plan('p4', 1899), 'eid_plans_year');
     rejects('eid_plans', { ...plan('p5', 2029), budget_minor: -1 }, 'eid_plans_budget');
@@ -337,7 +340,7 @@ describe('Eid Planner (R-EID)', () => {
       ...over,
     });
     insert(db, 'eid_packet_groups', group('g1'));
-    expect(failureOf(() => insert(db, 'eid_packet_groups', group('g2')))).toContain('UNIQUE');
+    expect(attempt('eid_packet_groups', group('g2'))).toContain('UNIQUE');
     insert(db, 'eid_packet_groups', group('g3', { group_key: 'elderly', count: 999 }));
     rejects('eid_packet_groups', group('g4', { group_key: 'others' }), 'eid_packets_group');
     const other = { ...plan('p2', 2028) };
@@ -356,9 +359,7 @@ describe('singletons', () => {
   });
   it('allow exactly the fixed id', () => {
     insert(db, 'profile', profile());
-    expect(failureOf(() => insert(db, 'profile', profile({ id: 'second' })))).toContain(
-      'profile_singleton',
-    );
+    expect(attempt('profile', profile({ id: 'second' }))).toContain('profile_singleton');
     insert(db, 'budget', { ...syncRow('budget'), monthly_amount_minor: 0, currency: 'SGD' });
     rejects(
       'budget',
@@ -392,10 +393,10 @@ describe('singletons', () => {
   it('defaults the profile to a guest-friendly state', () => {
     insert(db, 'profile', profile());
     const row = db.prepare('select * from profile').all()[0];
-    expect(row?.['friday_reminder']).toBe(0);
-    expect(row?.['welcome_seen']).toBe(0);
-    expect(row?.['hijri_adjust']).toBe(0);
-    expect(row?.['name']).toBe('');
+    expect(row?.friday_reminder).toBe(0);
+    expect(row?.welcome_seen).toBe(0);
+    expect(row?.hijri_adjust).toBe(0);
+    expect(row?.name).toBe('');
   });
 });
 
@@ -414,7 +415,7 @@ describe('local-only tables', () => {
       db
         .prepare('select seq from outbox order by seq')
         .all()
-        .map((r) => r['seq']),
+        .map((r) => r.seq),
     ).toEqual([1, 2]);
     rejects('outbox', entry('merge'), 'outbox_op');
   });
