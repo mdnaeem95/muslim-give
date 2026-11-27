@@ -21,6 +21,9 @@ function icuHijri(epochDay: number): { year: number; month: number; day: number 
   return { year: get('year'), month: get('month'), day: get('day') };
 }
 
+type Parts = { year: number; month: number; day: number } | null;
+const key = (h: Parts): string => (h === null ? 'none' : [h.year, h.month, h.day].join('-'));
+
 describe('R-HIJ-06 ICU oracle', () => {
   it('matches ICU on every day of the table and round-trips', () => {
     expect(icu.resolvedOptions().calendar).toBe('islamic-umalqura');
@@ -33,14 +36,8 @@ describe('R-HIJ-06 ICU oracle', () => {
       const date: CivilDate = fromEpochDay(epochDay);
       const ours = toHijri(date);
       const theirs = icuHijri(epochDay);
-      if (
-        ours === null ||
-        ours.year !== theirs.year ||
-        ours.month !== theirs.month ||
-        ours.day !== theirs.day ||
-        fromHijri(ours) !== date ||
-        toEpochDay(date) !== epochDay
-      ) {
+      const roundTrip = ours === null ? null : fromHijri(ours);
+      if (key(ours) !== key(theirs) || roundTrip !== date || toEpochDay(date) !== epochDay) {
         mismatches.push(`${date}: ours=${JSON.stringify(ours)} icu=${JSON.stringify(theirs)}`);
         if (mismatches.length >= 10) break;
       }

@@ -50,8 +50,13 @@ const MONTH_STARTS: readonly number[] = (() => {
 
 const TABLE_MONTHS = MONTH_STARTS.length - 1;
 
-// Indexes below are always within the table by construction; `as number` records that.
-const startOf = (monthIndex: number): number => MONTH_STARTS[monthIndex] as number;
+/** Callers bound the index to the table, so the guard below is unreachable by construction. */
+function startOf(monthIndex: number): number {
+  const value = MONTH_STARTS[monthIndex];
+  /* istanbul ignore if -- unreachable: keeps the type honest without a `!` assertion */
+  if (value === undefined) throw new RangeError(`Hijri month index out of range: ${monthIndex}`);
+  return value;
+}
 
 function monthIndexOf(year: number, month: number): number | null {
   if (
