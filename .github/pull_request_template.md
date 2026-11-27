@@ -4,6 +4,10 @@
 
 ## Tests added
 
+## Evidence
+
+Link the CI run and give test and coverage numbers. Add or update the entry in `docs/evidence/` (see its README).
+
 ## Screenshots (iOS and Android, for UI changes)
 
 ## Migration or schema impact
@@ -19,3 +23,5 @@
 - [ ] Accessible: roles, labels, text scaling, touch targets
 - [ ] Both platforms checked: back behaviour, safe areas, keyboard
 - [ ] No new dependency without an entry in `docs/dependencies.md`
+- [ ] `docs/evidence/` entry added or updated, with CI run link and numbers
+- [ ] Anything not verified is written down in the entry
