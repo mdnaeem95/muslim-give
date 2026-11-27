@@ -6,7 +6,18 @@
   "dependencies": {
     "@muslim-give/domain": "workspace:*",
     "@muslim-give/observability": "workspace:*",
-    "@muslim-give/ui-tokens": "workspace:*"
+    "@muslim-give/ui-tokens": "workspace:*",
+    "@types/react": "19.3.0",
+    "expo": "58.1.0",
+    "expo-constants": "58.0.16",
+    "expo-linking": "58.0.17",
+    "expo-router": "58.0.33",
+    "expo-status-bar": "58.0.5",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-native": "0.88.1",
+    "react-native-safe-area-context": "5.11.1",
+    "react-native-screens": "4.30.1"
   },
   "scripts": {
     "start": "expo start --dev-client",
@@ -16,5 +27,12 @@
     "typecheck": "tsc -p tsconfig.json",
     "lint": "eslint .",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest --coverage --json --outputFile=coverage/test-results.json"
+  },
+  "devDependencies": {
+    "@types/jest": "30.0.0",
+    "@types/node": "22",
+    "jest": "30.5.2",
+    "ts-jest": "29.4.15",
+    "typescript": "5.9"
   }
 }
