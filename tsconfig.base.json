@@ -13,6 +13,7 @@
     "noUnusedParameters": true,
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
+    "esModuleInterop": true,
     "skipLibCheck": true,
     "noEmit": true
   }
