@@ -118,3 +118,14 @@ Issues found and fixed while closing the PR: three strict lint rules (`prefer-op
 - Not verified, and why: the app's `expo-sqlite` adapter for `SqlExecutor` is not built, and its transaction and savepoint behaviour must be checked on a device; ESLint was not run locally
 - Note: permanent failures are parked with a far-future retry time (`PARKED_UNTIL`) instead of a new column, so no migration is needed. If a separate flag is preferred, it is a one-column migration.
 - Spec or docs updated: none needed
+
+## PR #11: reconcile and the pull apply rule
+
+- Requirement or rule IDs: spec 8.6 (the five reconcile invariants), 8.4 (apply rule, 60-second overlap), 8.8 (sync tests)
+- CI run: PR #11 checks (copy the numbers from the "Test evidence" summary at merge)
+- Tests: 19 new in `packages/domain`, counted from the local run before CI
+- Coverage: 100% on the new files in the local run; the Jest threshold enforces it in CI
+- What the tests prove: each of the five invariants produces exactly its fix and nothing for consistent data (Eid person with a deleted donation shows as not given; a gift whose Eid person was deleted keeps the gift and loses the link; a logged occurrence with no live donation becomes declined; a live monthly-giving donation without an occurrence gets one, including reviving a deleted one under the same ID; a receipt of a deleted donation is deleted); fixes come out in a stable order; across 300 seeded random inconsistent snapshots, applying the fixes leaves nothing more to fix; a pulled page applies only newer or unknown records, breaks same-time ties by device, skips documents with an invalid timestamp without stopping, and is harmless to plan twice; the pull window re-reads 60 seconds before the cursor
+- Manual or device checks: none
+- Not verified, and why: ESLint was not run locally; the data layer that applies the fixes and the pulled documents (and writes them through the outbox rules) is not built yet, so the property test uses a stand-in `applyFixes` that lives in the test file
+- Spec or docs updated: none needed

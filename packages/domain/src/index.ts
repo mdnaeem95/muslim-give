@@ -17,3 +17,5 @@ export * from './account-prompt.js';
 export * from './sync/hlc.js';
 export * from './sync/ids.js';
 export * from './sync/backoff.js';
+export * from './sync/reconcile.js';
+export * from './sync/pull.js';
