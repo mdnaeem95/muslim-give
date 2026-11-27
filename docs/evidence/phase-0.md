@@ -8,7 +8,8 @@ Gate (spec 21): CI green on both platforms; domain at 100% branch coverage; Hijr
 - [x] Domain at 100% branch coverage (enforced by the Jest threshold; see PR #1 and PR #2)
 - [x] Hijri oracle test passing (PR #2)
 - [ ] Development build on one iPhone and one Android phone (Expo app not yet created)
-- [ ] Remaining Phase 0 scope: budget, totals, recurring, reminders, Eid and prompt rules; SQLite schema v1 with migrations; outbox; logger; Sentry; design tokens; Firebase projects; EAS set-up
+- [x] Domain rules: money, dates, Hijri, totals, budget, recurring, reminders, Friday, Eid, account prompt (PRs #1, #2, #4)
+- [ ] Remaining Phase 0 scope: SQLite schema v1 with migrations; outbox; logger; Sentry; design tokens; core components; Firebase projects; EAS set-up
 
 Phase sign-off: not yet.
 
@@ -48,3 +49,14 @@ Issues found and fixed while closing the PR: three strict lint rules (`prefer-op
 - Manual or device checks: none
 - Not verified, and why: the summary step has only been run on sample data locally; confirm it on the first CI run of this PR
 - Spec or docs updated: the spec's Definition of Done (section 18.5) should gain "evidence entry added" in the Claude Doc and the repo snapshot; not done in this PR
+
+## PR #4: totals, budget, monthly giving, reminders, Friday, Eid and account-prompt rules
+
+- Requirement or rule IDs: R-TOT-01 to 04; R-BUD-02 to 06; R-REC-02, 03, 05, 07, 10; R-YR-02 to 05; R-FRI-02, 03; R-EID-01, 02, 03, 05, 07, 09; spec 9.2 (account prompt)
+- CI run: PR #4 checks (the "Test evidence" job summary holds the authoritative numbers; copy them here at merge)
+- Tests: 108 passed across the domain package, counted from the local run before CI
+- Coverage: 100% statements, branches, functions and lines on every source file in the local run; the Jest threshold enforces it in CI
+- What the tests prove: money totals never mix currencies; overseas is derived from the current home country; Eid Planner entries stay out of monthly budget spend; budget levels use exact integer maths at the 80%, 100% and over boundaries; monthly giving generates each due month once (running twice or after a sync adds nothing), clamps day 31 to short months, and treats 29 February correctly; reminders repeat on the Gregorian month-day with the 29 February rule and list the next 7 days soonest first; the Friday card and repeat gift follow the exclusions; the Eid plan adds up, reads "given" back from the log, and packet counters stop at the count; the account prompt asks at 5 entries, then at 15 entries or 14 days, then never, and defers behind a modal
+- Manual or device checks: none (no UI yet)
+- Not verified, and why: ESLint and the pinned Prettier were not run locally (no network installs here), so CI is the first lint run; six interpretations of ambiguous spec wording are listed in the PR description and await sign-off; Eid person and packet transactions and export belong with the data layer
+- Spec or docs updated: none needed
