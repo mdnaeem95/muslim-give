@@ -8,7 +8,9 @@ These rules apply to every pull request prepared with Claude. They exist because
 2. Read the Jest coverage threshold (100% for every package) before writing tests, and check coverage for the new files before pushing, not after CI fails.
 3. Before writing code, list the lint rules in `eslint.config.mjs` that new code is likely to hit (strictTypeChecked, `no-confusing-void-expression`, `dot-notation`, `no-unnecessary-condition`, `restrict-template-expressions`, unused variables), and write to them.
 4. When CI fails, read the whole log and look for the same class of mistake across all new files before pushing a fix. One fix commit per round, never one per error.
-5. Code that the real library runs lazily (Drizzle constraint and foreign-key callbacks, for example) must be exercised by a test. Stand-ins used for local checking do not prove this.
+5. Jest counts branches that Node's coverage does not: destructuring defaults (`[a = 0]`), `??`, `?.` and `||` fallbacks. Avoid fallbacks that cannot happen; if one is needed, test both sides.
+6. Type every generic collection (`new Map<string, Row>()`, `new Set<string>()`, `[] as Row[]`); an untyped one is `any` and fails `no-unsafe-*`.
+7. Code that the real library runs lazily (Drizzle constraint and foreign-key callbacks, for example) must be exercised by a test. Stand-ins used for local checking do not prove this.
 
 ## What cannot be checked locally
 

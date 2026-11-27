@@ -23,12 +23,13 @@ export function uuidV7(millis: number, random: readonly number[]): Result<Uuid, 
     random.length === RANDOM_BYTES &&
     random.every((byte) => Number.isInteger(byte) && byte >= 0 && byte <= 255);
   if (!valid) return err({ code: 'id.invalid_input' });
-  const [b0 = 0, b1 = 0, b2 = 0, b3 = 0, ...tail] = random;
   const time = hex(millis, 12);
-  const randA = `${hex(b0, 2)}${hex(b1 >> 4, 1)}`;
-  const variant = hex((b1 & 0x3) | 0x8, 1);
-  const randB = `${variant}${hex(b2, 2)}${hex(b3 & 0xf, 1)}`;
-  const last = tail.map((byte) => hex(byte, 2)).join('');
+  // Twenty hex digits for ten bytes: no per-byte arithmetic, so no unreachable default branches.
+  const digits = random.map((byte) => hex(byte, 2)).join('');
+  const randA = digits.slice(0, 3);
+  const variant = hex((Number.parseInt(digits.charAt(3), 16) & 0x3) | 0x8, 1);
+  const randB = `${variant}${digits.slice(4, 6)}${digits.charAt(7)}`;
+  const last = digits.slice(8);
   return ok(`${time.slice(0, 8)}-${time.slice(8)}-7${randA}-${randB}-${last}` as Uuid);
 }
 
