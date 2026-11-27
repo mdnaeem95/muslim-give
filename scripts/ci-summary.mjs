@@ -2,7 +2,7 @@
 // is its own evidence record (docs/evidence/README.md).
 import { appendFileSync, existsSync, readFileSync } from 'node:fs';
 
-const packages = ['domain', 'ui-tokens', 'schema', 'local-db'];
+const packages = ['domain', 'ui-tokens', 'schema', 'local-db', 'observability'];
 const lines = ['### Test evidence', ''];
 
 for (const name of packages) {

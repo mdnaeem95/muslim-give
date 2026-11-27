@@ -37,4 +37,5 @@ jobs:
             packages/ui-tokens/coverage
             packages/schema/coverage
             packages/local-db/coverage
+            packages/observability/coverage
           retention-days: 90
