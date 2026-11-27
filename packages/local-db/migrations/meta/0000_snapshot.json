@@ -1,0 +1,2134 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "8df85f72-ad02-49e0-ab61-66b778fa135f",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "tables": {
+    "device": {
+      "name": "device",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "install_id": {
+          "name": "install_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "hlc_millis": {
+          "name": "hlc_millis",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "hlc_counter": {
+          "name": "hlc_counter",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "device_singleton": {
+          "name": "device_singleton",
+          "value": "\"device\".\"id\" = 'device'"
+        }
+      }
+    },
+    "notification_schedule": {
+      "name": "notification_schedule",
+      "columns": {
+        "key": {
+          "name": "key",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "notification_id": {
+          "name": "notification_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "fire_at": {
+          "name": "fire_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "official_dates_cache": {
+      "name": "official_dates_cache",
+      "columns": {
+        "key": {
+          "name": "key",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "events": {
+          "name": "events",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "outbox": {
+      "name": "outbox",
+      "columns": {
+        "seq": {
+          "name": "seq",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "collection": {
+          "name": "collection",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "record_id": {
+          "name": "record_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "op": {
+          "name": "op",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "hlc": {
+          "name": "hlc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "payload": {
+          "name": "payload",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "attempts": {
+          "name": "attempts",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "next_attempt_at": {
+          "name": "next_attempt_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "last_error_code": {
+          "name": "last_error_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "outbox_record_idx": {
+          "name": "outbox_record_idx",
+          "columns": [
+            "collection",
+            "record_id"
+          ],
+          "isUnique": false
+        },
+        "outbox_due_idx": {
+          "name": "outbox_due_idx",
+          "columns": [
+            "next_attempt_at"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "outbox_op": {
+          "name": "outbox_op",
+          "value": "\"outbox\".\"op\" in ('upsert', 'delete')"
+        },
+        "outbox_attempts": {
+          "name": "outbox_attempts",
+          "value": "\"outbox\".\"attempts\" >= 0"
+        }
+      }
+    },
+    "ref_cache": {
+      "name": "ref_cache",
+      "columns": {
+        "list_id": {
+          "name": "list_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "version": {
+          "name": "version",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "items": {
+          "name": "items",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "sync_state": {
+      "name": "sync_state",
+      "columns": {
+        "collection": {
+          "name": "collection",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "cursor": {
+          "name": "cursor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "last_success_at": {
+          "name": "last_success_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "budget": {
+      "name": "budget",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "hlc": {
+          "name": "hlc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "monthly_amount_minor": {
+          "name": "monthly_amount_minor",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "currency": {
+          "name": "currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "budget_singleton": {
+          "name": "budget_singleton",
+          "value": "\"budget\".\"id\" = 'budget'"
+        },
+        "budget_deleted": {
+          "name": "budget_deleted",
+          "value": "\"budget\".\"deleted\" in (0, 1)"
+        },
+        "budget_amount": {
+          "name": "budget_amount",
+          "value": "\"budget\".\"monthly_amount_minor\" >= 0"
+        },
+        "budget_currency": {
+          "name": "budget_currency",
+          "value": "length(\"budget\".\"currency\") = 3 and \"budget\".\"currency\" = upper(\"budget\".\"currency\")"
+        }
+      }
+    },
+    "donations": {
+      "name": "donations",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "hlc": {
+          "name": "hlc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "date": {
+          "name": "date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "amount_minor": {
+          "name": "amount_minor",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "currency": {
+          "name": "currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "country_code": {
+          "name": "country_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "recipient_name": {
+          "name": "recipient_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "recipient_ref_id": {
+          "name": "recipient_ref_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "relationship": {
+          "name": "relationship",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "relationship_side": {
+          "name": "relationship_side",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "relationship_line": {
+          "name": "relationship_line",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "occasion": {
+          "name": "occasion",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "occasion_other": {
+          "name": "occasion_other",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "giving_type": {
+          "name": "giving_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "on_behalf": {
+          "name": "on_behalf",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "on_behalf_name": {
+          "name": "on_behalf_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "note": {
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "recurring_rule_id": {
+          "name": "recurring_rule_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "occurrence_month": {
+          "name": "occurrence_month",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "eid_plan_id": {
+          "name": "eid_plan_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "eid_person_id": {
+          "name": "eid_person_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "eid_packet_group": {
+          "name": "eid_packet_group",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "donations_date_idx": {
+          "name": "donations_date_idx",
+          "columns": [
+            "deleted",
+            "date"
+          ],
+          "isUnique": false
+        },
+        "donations_currency_date_idx": {
+          "name": "donations_currency_date_idx",
+          "columns": [
+            "deleted",
+            "currency",
+            "date"
+          ],
+          "isUnique": false
+        },
+        "donations_category_date_idx": {
+          "name": "donations_category_date_idx",
+          "columns": [
+            "deleted",
+            "category",
+            "date"
+          ],
+          "isUnique": false
+        },
+        "donations_occurrence_uq": {
+          "name": "donations_occurrence_uq",
+          "columns": [
+            "recurring_rule_id",
+            "occurrence_month"
+          ],
+          "isUnique": true,
+          "where": "\"donations\".\"recurring_rule_id\" is not null"
+        },
+        "donations_eid_packet_idx": {
+          "name": "donations_eid_packet_idx",
+          "columns": [
+            "eid_plan_id",
+            "eid_packet_group"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "donations_deleted": {
+          "name": "donations_deleted",
+          "value": "\"donations\".\"deleted\" in (0, 1)"
+        },
+        "donations_date": {
+          "name": "donations_date",
+          "value": "\"donations\".\"date\" glob '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'"
+        },
+        "donations_amount": {
+          "name": "donations_amount",
+          "value": "\"donations\".\"amount_minor\" > 0"
+        },
+        "donations_currency": {
+          "name": "donations_currency",
+          "value": "length(\"donations\".\"currency\") = 3 and \"donations\".\"currency\" = upper(\"donations\".\"currency\")"
+        },
+        "donations_country": {
+          "name": "donations_country",
+          "value": "length(\"donations\".\"country_code\") = 2 and \"donations\".\"country_code\" = upper(\"donations\".\"country_code\")"
+        },
+        "donations_source": {
+          "name": "donations_source",
+          "value": "\"donations\".\"source\" in ('manual', 'recurring', 'eid_person', 'eid_packet', 'repeat_friday', 'reminder')"
+        },
+        "donations_packet_group": {
+          "name": "donations_packet_group",
+          "value": "(\"donations\".\"eid_packet_group\" is null or \"donations\".\"eid_packet_group\" in ('kids', 'elderly'))"
+        },
+        "donations_occurrence_pair": {
+          "name": "donations_occurrence_pair",
+          "value": "(\"donations\".\"recurring_rule_id\" is null) = (\"donations\".\"occurrence_month\" is null)"
+        },
+        "donations_category": {
+          "name": "donations_category",
+          "value": "\"donations\".\"category\" in ('individual', 'mosque', 'charity')"
+        },
+        "donations_relationship": {
+          "name": "donations_relationship",
+          "value": "(\"donations\".\"relationship\" is null or \"donations\".\"relationship\" in ('father', 'mother', 'both_parents', 'spouse', 'kids', 'siblings', 'grandparents', 'uncle', 'aunt', 'cousins', 'nephew', 'niece', 'distant_relative', 'friends', 'stranger'))"
+        },
+        "donations_side": {
+          "name": "donations_side",
+          "value": "(\"donations\".\"relationship_side\" is null or \"donations\".\"relationship_side\" in ('mine', 'spouse'))"
+        },
+        "donations_line": {
+          "name": "donations_line",
+          "value": "(\"donations\".\"relationship_line\" is null or \"donations\".\"relationship_line\" in ('paternal', 'maternal'))"
+        },
+        "donations_recipient_len": {
+          "name": "donations_recipient_len",
+          "value": "(\"donations\".\"recipient_name\" is null or length(\"donations\".\"recipient_name\") <= 80)"
+        },
+        "donations_recipient_rules": {
+          "name": "donations_recipient_rules",
+          "value": "(\"donations\".\"category\" = 'individual' or (\"donations\".\"recipient_name\" is not null and length(\"donations\".\"recipient_name\") > 0))\n      and (\"donations\".\"category\" = 'individual' or (\"donations\".\"relationship\" is null and \"donations\".\"relationship_side\" is null and \"donations\".\"relationship_line\" is null))"
+        },
+        "donations_occasion": {
+          "name": "donations_occasion",
+          "value": "\"donations\".\"occasion\" in ('newborn', 'cukur_rambut', 'visiting_sick', 'death_funeral', 'birthday', 'anniversary', 'wedding', 'umrah_haj_send_off', 'doa_selamat', 'doa_tahlil', 'friday_prayer', 'subuh', 'zohor', 'asar', 'maghrib', 'isyak', 'tarawih', 'eid_prayer', 'ramadan', 'laylatul_qadr', 'eid_al_fitr', 'day_of_arafah', 'eid_al_adha', 'awal_muharram', 'ashura', 'mawlid_nabi', 'isra_miraj', 'nisfu_syaban', 'none', 'appeal_emergency', 'other')"
+        },
+        "donations_giving_type": {
+          "name": "donations_giving_type",
+          "value": "\"donations\".\"giving_type\" in ('sadaqah', 'zakat_fitrah', 'zakat_harta', 'infaq', 'wakaf', 'fidyah', 'eid_money', 'hadiah', 'other')"
+        },
+        "donations_on_behalf": {
+          "name": "donations_on_behalf",
+          "value": "\"donations\".\"on_behalf\" in ('self', 'late_father', 'late_mother', 'late_parents', 'other')"
+        },
+        "donations_occasion_other_len": {
+          "name": "donations_occasion_other_len",
+          "value": "(\"donations\".\"occasion_other\" is null or length(\"donations\".\"occasion_other\") <= 60)"
+        },
+        "donations_on_behalf_name_len": {
+          "name": "donations_on_behalf_name_len",
+          "value": "(\"donations\".\"on_behalf_name\" is null or length(\"donations\".\"on_behalf_name\") <= 60)"
+        },
+        "donations_note_len": {
+          "name": "donations_note_len",
+          "value": "(\"donations\".\"note\" is null or length(\"donations\".\"note\") <= 120)"
+        },
+        "donations_occasion_other_rule": {
+          "name": "donations_occasion_other_rule",
+          "value": "\"donations\".\"occasion_other\" is null or \"donations\".\"occasion\" = 'other'"
+        },
+        "donations_on_behalf_name_rule": {
+          "name": "donations_on_behalf_name_rule",
+          "value": "(\"donations\".\"on_behalf\" = 'other') = (\"donations\".\"on_behalf_name\" is not null)"
+        }
+      }
+    },
+    "eid_packet_groups": {
+      "name": "eid_packet_groups",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "hlc": {
+          "name": "hlc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "plan_id": {
+          "name": "plan_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "group_key": {
+          "name": "group_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "count": {
+          "name": "count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "amount_each_minor": {
+          "name": "amount_each_minor",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "eid_packets_plan_group_uq": {
+          "name": "eid_packets_plan_group_uq",
+          "columns": [
+            "plan_id",
+            "group_key"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "eid_packet_groups_plan_id_eid_plans_id_fk": {
+          "name": "eid_packet_groups_plan_id_eid_plans_id_fk",
+          "tableFrom": "eid_packet_groups",
+          "tableTo": "eid_plans",
+          "columnsFrom": [
+            "plan_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "eid_packets_deleted": {
+          "name": "eid_packets_deleted",
+          "value": "\"eid_packet_groups\".\"deleted\" in (0, 1)"
+        },
+        "eid_packets_group": {
+          "name": "eid_packets_group",
+          "value": "\"eid_packet_groups\".\"group_key\" in ('kids', 'elderly')"
+        },
+        "eid_packets_count": {
+          "name": "eid_packets_count",
+          "value": "\"eid_packet_groups\".\"count\" between 0 and 999"
+        },
+        "eid_packets_amount": {
+          "name": "eid_packets_amount",
+          "value": "\"eid_packet_groups\".\"amount_each_minor\" >= 0"
+        }
+      }
+    },
+    "eid_people": {
+      "name": "eid_people",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "hlc": {
+          "name": "hlc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "plan_id": {
+          "name": "plan_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "relationship": {
+          "name": "relationship",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "relationship_side": {
+          "name": "relationship_side",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "relationship_line": {
+          "name": "relationship_line",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "group": {
+          "name": "group",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "amount_minor": {
+          "name": "amount_minor",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "donation_id": {
+          "name": "donation_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "eid_people_plan_idx": {
+          "name": "eid_people_plan_idx",
+          "columns": [
+            "plan_id",
+            "deleted"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "eid_people_plan_id_eid_plans_id_fk": {
+          "name": "eid_people_plan_id_eid_plans_id_fk",
+          "tableFrom": "eid_people",
+          "tableTo": "eid_plans",
+          "columnsFrom": [
+            "plan_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "eid_people_donation_id_donations_id_fk": {
+          "name": "eid_people_donation_id_donations_id_fk",
+          "tableFrom": "eid_people",
+          "tableTo": "donations",
+          "columnsFrom": [
+            "donation_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "eid_people_deleted": {
+          "name": "eid_people_deleted",
+          "value": "\"eid_people\".\"deleted\" in (0, 1)"
+        },
+        "eid_people_name": {
+          "name": "eid_people_name",
+          "value": "length(\"eid_people\".\"name\") between 1 and 40"
+        },
+        "eid_people_relationship": {
+          "name": "eid_people_relationship",
+          "value": "\"eid_people\".\"relationship\" in ('father', 'mother', 'both_parents', 'spouse', 'kids', 'siblings', 'grandparents', 'uncle', 'aunt', 'cousins', 'nephew', 'niece', 'distant_relative', 'friends', 'stranger') and \"eid_people\".\"relationship\" <> 'stranger'"
+        },
+        "eid_people_side": {
+          "name": "eid_people_side",
+          "value": "(\"eid_people\".\"relationship_side\" is null or \"eid_people\".\"relationship_side\" in ('mine', 'spouse'))"
+        },
+        "eid_people_line": {
+          "name": "eid_people_line",
+          "value": "(\"eid_people\".\"relationship_line\" is null or \"eid_people\".\"relationship_line\" in ('paternal', 'maternal'))"
+        },
+        "eid_people_group": {
+          "name": "eid_people_group",
+          "value": "\"eid_people\".\"group\" in ('kids', 'families', 'others')"
+        },
+        "eid_people_amount": {
+          "name": "eid_people_amount",
+          "value": "\"eid_people\".\"amount_minor\" > 0"
+        }
+      }
+    },
+    "eid_plans": {
+      "name": "eid_plans",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "hlc": {
+          "name": "hlc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "year": {
+          "name": "year",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "budget_minor": {
+          "name": "budget_minor",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "currency": {
+          "name": "currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "eid_plans_year_uq": {
+          "name": "eid_plans_year_uq",
+          "columns": [
+            "year"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "eid_plans_deleted": {
+          "name": "eid_plans_deleted",
+          "value": "\"eid_plans\".\"deleted\" in (0, 1)"
+        },
+        "eid_plans_year": {
+          "name": "eid_plans_year",
+          "value": "\"eid_plans\".\"year\" between 1900 and 9999"
+        },
+        "eid_plans_budget": {
+          "name": "eid_plans_budget",
+          "value": "\"eid_plans\".\"budget_minor\" >= 0"
+        },
+        "eid_plans_currency": {
+          "name": "eid_plans_currency",
+          "value": "length(\"eid_plans\".\"currency\") = 3 and \"eid_plans\".\"currency\" = upper(\"eid_plans\".\"currency\")"
+        }
+      }
+    },
+    "profile": {
+      "name": "profile",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "hlc": {
+          "name": "hlc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "''"
+        },
+        "marital_status": {
+          "name": "marital_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "home_country_code": {
+          "name": "home_country_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "home_currency": {
+          "name": "home_currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "hijri_adjust": {
+          "name": "hijri_adjust",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "friday_reminder": {
+          "name": "friday_reminder",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "friday_dismissed_date": {
+          "name": "friday_dismissed_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "welcome_seen": {
+          "name": "welcome_seen",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "profile_singleton": {
+          "name": "profile_singleton",
+          "value": "\"profile\".\"id\" = 'profile'"
+        },
+        "profile_deleted": {
+          "name": "profile_deleted",
+          "value": "\"profile\".\"deleted\" in (0, 1)"
+        },
+        "profile_name": {
+          "name": "profile_name",
+          "value": "length(\"profile\".\"name\") <= 30"
+        },
+        "profile_marital": {
+          "name": "profile_marital",
+          "value": "(\"profile\".\"marital_status\" is null or \"profile\".\"marital_status\" in ('single', 'married'))"
+        },
+        "profile_country": {
+          "name": "profile_country",
+          "value": "length(\"profile\".\"home_country_code\") = 2 and \"profile\".\"home_country_code\" = upper(\"profile\".\"home_country_code\")"
+        },
+        "profile_currency": {
+          "name": "profile_currency",
+          "value": "length(\"profile\".\"home_currency\") = 3 and \"profile\".\"home_currency\" = upper(\"profile\".\"home_currency\")"
+        },
+        "profile_hijri": {
+          "name": "profile_hijri",
+          "value": "\"profile\".\"hijri_adjust\" in (-1, 0, 1)"
+        },
+        "profile_friday": {
+          "name": "profile_friday",
+          "value": "\"profile\".\"friday_reminder\" in (0, 1)"
+        },
+        "profile_friday_dismissed": {
+          "name": "profile_friday_dismissed",
+          "value": "(\"profile\".\"friday_dismissed_date\" is null or \"profile\".\"friday_dismissed_date\" glob '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')"
+        },
+        "profile_welcome": {
+          "name": "profile_welcome",
+          "value": "\"profile\".\"welcome_seen\" in (0, 1)"
+        }
+      }
+    },
+    "prompt_state": {
+      "name": "prompt_state",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "hlc": {
+          "name": "hlc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "times_asked": {
+          "name": "times_asked",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "last_asked_at": {
+          "name": "last_asked_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "prompt_singleton": {
+          "name": "prompt_singleton",
+          "value": "\"prompt_state\".\"id\" = 'prompt_state'"
+        },
+        "prompt_deleted": {
+          "name": "prompt_deleted",
+          "value": "\"prompt_state\".\"deleted\" in (0, 1)"
+        },
+        "prompt_times": {
+          "name": "prompt_times",
+          "value": "\"prompt_state\".\"times_asked\" between 0 and 2"
+        }
+      }
+    },
+    "receipts": {
+      "name": "receipts",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "hlc": {
+          "name": "hlc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "donation_id": {
+          "name": "donation_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "file_name": {
+          "name": "file_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "mime_type": {
+          "name": "mime_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "size_bytes": {
+          "name": "size_bytes",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "sha256": {
+          "name": "sha256",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "width": {
+          "name": "width",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "height": {
+          "name": "height",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "local_path": {
+          "name": "local_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "upload_state": {
+          "name": "upload_state",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'pending'"
+        },
+        "attempts": {
+          "name": "attempts",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "last_error_code": {
+          "name": "last_error_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "receipts_donation_idx": {
+          "name": "receipts_donation_idx",
+          "columns": [
+            "donation_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "receipts_donation_id_donations_id_fk": {
+          "name": "receipts_donation_id_donations_id_fk",
+          "tableFrom": "receipts",
+          "tableTo": "donations",
+          "columnsFrom": [
+            "donation_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "receipts_deleted": {
+          "name": "receipts_deleted",
+          "value": "\"receipts\".\"deleted\" in (0, 1)"
+        },
+        "receipts_file_name": {
+          "name": "receipts_file_name",
+          "value": "length(\"receipts\".\"file_name\") between 1 and 100"
+        },
+        "receipts_size": {
+          "name": "receipts_size",
+          "value": "\"receipts\".\"size_bytes\" between 1 and 10485760"
+        },
+        "receipts_sha256": {
+          "name": "receipts_sha256",
+          "value": "length(\"receipts\".\"sha256\") = 64"
+        },
+        "receipts_upload_state": {
+          "name": "receipts_upload_state",
+          "value": "\"receipts\".\"upload_state\" in ('pending', 'uploading', 'uploaded', 'failed')"
+        }
+      }
+    },
+    "recurring_occurrences": {
+      "name": "recurring_occurrences",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "hlc": {
+          "name": "hlc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "rule_id": {
+          "name": "rule_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "month": {
+          "name": "month",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "due_date": {
+          "name": "due_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "amount_minor": {
+          "name": "amount_minor",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "currency": {
+          "name": "currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "donation_id": {
+          "name": "donation_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "occurrences_rule_month_uq": {
+          "name": "occurrences_rule_month_uq",
+          "columns": [
+            "rule_id",
+            "month"
+          ],
+          "isUnique": true
+        },
+        "occurrences_status_idx": {
+          "name": "occurrences_status_idx",
+          "columns": [
+            "deleted",
+            "status",
+            "due_date"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "recurring_occurrences_rule_id_recurring_rules_id_fk": {
+          "name": "recurring_occurrences_rule_id_recurring_rules_id_fk",
+          "tableFrom": "recurring_occurrences",
+          "tableTo": "recurring_rules",
+          "columnsFrom": [
+            "rule_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "recurring_occurrences_donation_id_donations_id_fk": {
+          "name": "recurring_occurrences_donation_id_donations_id_fk",
+          "tableFrom": "recurring_occurrences",
+          "tableTo": "donations",
+          "columnsFrom": [
+            "donation_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "occurrences_deleted": {
+          "name": "occurrences_deleted",
+          "value": "\"recurring_occurrences\".\"deleted\" in (0, 1)"
+        },
+        "occurrences_month": {
+          "name": "occurrences_month",
+          "value": "\"recurring_occurrences\".\"month\" glob '[0-9][0-9][0-9][0-9]-[0-9][0-9]'"
+        },
+        "occurrences_due_date": {
+          "name": "occurrences_due_date",
+          "value": "\"recurring_occurrences\".\"due_date\" glob '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'"
+        },
+        "occurrences_status": {
+          "name": "occurrences_status",
+          "value": "\"recurring_occurrences\".\"status\" in ('pending', 'logged', 'declined', 'skipped')"
+        },
+        "occurrences_amount": {
+          "name": "occurrences_amount",
+          "value": "\"recurring_occurrences\".\"amount_minor\" > 0"
+        },
+        "occurrences_currency": {
+          "name": "occurrences_currency",
+          "value": "length(\"recurring_occurrences\".\"currency\") = 3 and \"recurring_occurrences\".\"currency\" = upper(\"recurring_occurrences\".\"currency\")"
+        }
+      }
+    },
+    "recurring_rules": {
+      "name": "recurring_rules",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "hlc": {
+          "name": "hlc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "recipient_name": {
+          "name": "recipient_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "recipient_ref_id": {
+          "name": "recipient_ref_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "relationship": {
+          "name": "relationship",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "relationship_side": {
+          "name": "relationship_side",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "relationship_line": {
+          "name": "relationship_line",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "occasion": {
+          "name": "occasion",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "occasion_other": {
+          "name": "occasion_other",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "giving_type": {
+          "name": "giving_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "on_behalf": {
+          "name": "on_behalf",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "on_behalf_name": {
+          "name": "on_behalf_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "note": {
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "amount_minor": {
+          "name": "amount_minor",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "currency": {
+          "name": "currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "country_code": {
+          "name": "country_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "day_of_month": {
+          "name": "day_of_month",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "start_month": {
+          "name": "start_month",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "mode": {
+          "name": "mode",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'active'"
+        },
+        "resume_from_month": {
+          "name": "resume_from_month",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "backfill_decided": {
+          "name": "backfill_decided",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        }
+      },
+      "indexes": {
+        "rules_status_idx": {
+          "name": "rules_status_idx",
+          "columns": [
+            "deleted",
+            "status"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "rules_deleted": {
+          "name": "rules_deleted",
+          "value": "\"recurring_rules\".\"deleted\" in (0, 1)"
+        },
+        "rules_amount": {
+          "name": "rules_amount",
+          "value": "\"recurring_rules\".\"amount_minor\" > 0"
+        },
+        "rules_currency": {
+          "name": "rules_currency",
+          "value": "length(\"recurring_rules\".\"currency\") = 3 and \"recurring_rules\".\"currency\" = upper(\"recurring_rules\".\"currency\")"
+        },
+        "rules_country": {
+          "name": "rules_country",
+          "value": "length(\"recurring_rules\".\"country_code\") = 2 and \"recurring_rules\".\"country_code\" = upper(\"recurring_rules\".\"country_code\")"
+        },
+        "rules_day": {
+          "name": "rules_day",
+          "value": "\"recurring_rules\".\"day_of_month\" between 1 and 31"
+        },
+        "rules_start_month": {
+          "name": "rules_start_month",
+          "value": "\"recurring_rules\".\"start_month\" glob '[0-9][0-9][0-9][0-9]-[0-9][0-9]'"
+        },
+        "rules_resume_month": {
+          "name": "rules_resume_month",
+          "value": "\"recurring_rules\".\"resume_from_month\" is null or \"recurring_rules\".\"resume_from_month\" glob '[0-9][0-9][0-9][0-9]-[0-9][0-9]'"
+        },
+        "rules_mode": {
+          "name": "rules_mode",
+          "value": "\"recurring_rules\".\"mode\" in ('auto', 'confirm')"
+        },
+        "rules_status": {
+          "name": "rules_status",
+          "value": "\"recurring_rules\".\"status\" in ('active', 'paused', 'stopped')"
+        },
+        "rules_backfill": {
+          "name": "rules_backfill",
+          "value": "\"recurring_rules\".\"backfill_decided\" in (0, 1)"
+        },
+        "rules_no_friday": {
+          "name": "rules_no_friday",
+          "value": "\"recurring_rules\".\"occasion\" <> 'friday_prayer'"
+        },
+        "rules_category": {
+          "name": "rules_category",
+          "value": "\"recurring_rules\".\"category\" in ('individual', 'mosque', 'charity')"
+        },
+        "rules_relationship": {
+          "name": "rules_relationship",
+          "value": "(\"recurring_rules\".\"relationship\" is null or \"recurring_rules\".\"relationship\" in ('father', 'mother', 'both_parents', 'spouse', 'kids', 'siblings', 'grandparents', 'uncle', 'aunt', 'cousins', 'nephew', 'niece', 'distant_relative', 'friends', 'stranger'))"
+        },
+        "rules_side": {
+          "name": "rules_side",
+          "value": "(\"recurring_rules\".\"relationship_side\" is null or \"recurring_rules\".\"relationship_side\" in ('mine', 'spouse'))"
+        },
+        "rules_line": {
+          "name": "rules_line",
+          "value": "(\"recurring_rules\".\"relationship_line\" is null or \"recurring_rules\".\"relationship_line\" in ('paternal', 'maternal'))"
+        },
+        "rules_recipient_len": {
+          "name": "rules_recipient_len",
+          "value": "(\"recurring_rules\".\"recipient_name\" is null or length(\"recurring_rules\".\"recipient_name\") <= 80)"
+        },
+        "rules_recipient_rules": {
+          "name": "rules_recipient_rules",
+          "value": "(\"recurring_rules\".\"category\" = 'individual' or (\"recurring_rules\".\"recipient_name\" is not null and length(\"recurring_rules\".\"recipient_name\") > 0))\n      and (\"recurring_rules\".\"category\" = 'individual' or (\"recurring_rules\".\"relationship\" is null and \"recurring_rules\".\"relationship_side\" is null and \"recurring_rules\".\"relationship_line\" is null))"
+        },
+        "rules_occasion": {
+          "name": "rules_occasion",
+          "value": "\"recurring_rules\".\"occasion\" in ('newborn', 'cukur_rambut', 'visiting_sick', 'death_funeral', 'birthday', 'anniversary', 'wedding', 'umrah_haj_send_off', 'doa_selamat', 'doa_tahlil', 'friday_prayer', 'subuh', 'zohor', 'asar', 'maghrib', 'isyak', 'tarawih', 'eid_prayer', 'ramadan', 'laylatul_qadr', 'eid_al_fitr', 'day_of_arafah', 'eid_al_adha', 'awal_muharram', 'ashura', 'mawlid_nabi', 'isra_miraj', 'nisfu_syaban', 'none', 'appeal_emergency', 'other')"
+        },
+        "rules_giving_type": {
+          "name": "rules_giving_type",
+          "value": "\"recurring_rules\".\"giving_type\" in ('sadaqah', 'zakat_fitrah', 'zakat_harta', 'infaq', 'wakaf', 'fidyah', 'eid_money', 'hadiah', 'other')"
+        },
+        "rules_on_behalf": {
+          "name": "rules_on_behalf",
+          "value": "\"recurring_rules\".\"on_behalf\" in ('self', 'late_father', 'late_mother', 'late_parents', 'other')"
+        },
+        "rules_occasion_other_len": {
+          "name": "rules_occasion_other_len",
+          "value": "(\"recurring_rules\".\"occasion_other\" is null or length(\"recurring_rules\".\"occasion_other\") <= 60)"
+        },
+        "rules_on_behalf_name_len": {
+          "name": "rules_on_behalf_name_len",
+          "value": "(\"recurring_rules\".\"on_behalf_name\" is null or length(\"recurring_rules\".\"on_behalf_name\") <= 60)"
+        },
+        "rules_note_len": {
+          "name": "rules_note_len",
+          "value": "(\"recurring_rules\".\"note\" is null or length(\"recurring_rules\".\"note\") <= 120)"
+        },
+        "rules_occasion_other_rule": {
+          "name": "rules_occasion_other_rule",
+          "value": "\"recurring_rules\".\"occasion_other\" is null or \"recurring_rules\".\"occasion\" = 'other'"
+        },
+        "rules_on_behalf_name_rule": {
+          "name": "rules_on_behalf_name_rule",
+          "value": "(\"recurring_rules\".\"on_behalf\" = 'other') = (\"recurring_rules\".\"on_behalf_name\" is not null)"
+        }
+      }
+    },
+    "reminders": {
+      "name": "reminders",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "hlc": {
+          "name": "hlc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "label": {
+          "name": "label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "month_day": {
+          "name": "month_day",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "occasion": {
+          "name": "occasion",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "recipient_name": {
+          "name": "recipient_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "recipient_ref_id": {
+          "name": "recipient_ref_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "relationship": {
+          "name": "relationship",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "relationship_side": {
+          "name": "relationship_side",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "relationship_line": {
+          "name": "relationship_line",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "last_amount_minor": {
+          "name": "last_amount_minor",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "last_currency": {
+          "name": "last_currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "last_date": {
+          "name": "last_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "source_donation_id": {
+          "name": "source_donation_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "reminders_month_day_idx": {
+          "name": "reminders_month_day_idx",
+          "columns": [
+            "deleted",
+            "month_day"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "reminders_deleted": {
+          "name": "reminders_deleted",
+          "value": "\"reminders\".\"deleted\" in (0, 1)"
+        },
+        "reminders_label": {
+          "name": "reminders_label",
+          "value": "length(\"reminders\".\"label\") between 1 and 40"
+        },
+        "reminders_month_day": {
+          "name": "reminders_month_day",
+          "value": "\"reminders\".\"month_day\" glob '[0-1][0-9]-[0-3][0-9]'"
+        },
+        "reminders_occasion": {
+          "name": "reminders_occasion",
+          "value": "\"reminders\".\"occasion\" in ('newborn', 'cukur_rambut', 'visiting_sick', 'death_funeral', 'birthday', 'anniversary', 'wedding', 'umrah_haj_send_off', 'doa_selamat', 'doa_tahlil', 'friday_prayer', 'subuh', 'zohor', 'asar', 'maghrib', 'isyak', 'tarawih', 'eid_prayer', 'ramadan', 'laylatul_qadr', 'eid_al_fitr', 'day_of_arafah', 'eid_al_adha', 'awal_muharram', 'ashura', 'mawlid_nabi', 'isra_miraj', 'nisfu_syaban', 'none', 'appeal_emergency', 'other')"
+        },
+        "reminders_last_amount": {
+          "name": "reminders_last_amount",
+          "value": "\"reminders\".\"last_amount_minor\" is null or \"reminders\".\"last_amount_minor\" > 0"
+        },
+        "reminders_last_currency": {
+          "name": "reminders_last_currency",
+          "value": "\"reminders\".\"last_currency\" is null or length(\"reminders\".\"last_currency\") = 3 and \"reminders\".\"last_currency\" = upper(\"reminders\".\"last_currency\")"
+        },
+        "reminders_last_date": {
+          "name": "reminders_last_date",
+          "value": "(\"reminders\".\"last_date\" is null or \"reminders\".\"last_date\" glob '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')"
+        },
+        "reminders_category": {
+          "name": "reminders_category",
+          "value": "\"reminders\".\"category\" in ('individual', 'mosque', 'charity')"
+        },
+        "reminders_relationship": {
+          "name": "reminders_relationship",
+          "value": "(\"reminders\".\"relationship\" is null or \"reminders\".\"relationship\" in ('father', 'mother', 'both_parents', 'spouse', 'kids', 'siblings', 'grandparents', 'uncle', 'aunt', 'cousins', 'nephew', 'niece', 'distant_relative', 'friends', 'stranger'))"
+        },
+        "reminders_side": {
+          "name": "reminders_side",
+          "value": "(\"reminders\".\"relationship_side\" is null or \"reminders\".\"relationship_side\" in ('mine', 'spouse'))"
+        },
+        "reminders_line": {
+          "name": "reminders_line",
+          "value": "(\"reminders\".\"relationship_line\" is null or \"reminders\".\"relationship_line\" in ('paternal', 'maternal'))"
+        },
+        "reminders_recipient_len": {
+          "name": "reminders_recipient_len",
+          "value": "(\"reminders\".\"recipient_name\" is null or length(\"reminders\".\"recipient_name\") <= 80)"
+        },
+        "reminders_recipient_rules": {
+          "name": "reminders_recipient_rules",
+          "value": "(\"reminders\".\"category\" = 'individual' or (\"reminders\".\"recipient_name\" is not null and length(\"reminders\".\"recipient_name\") > 0))\n      and (\"reminders\".\"category\" = 'individual' or (\"reminders\".\"relationship\" is null and \"reminders\".\"relationship_side\" is null and \"reminders\".\"relationship_line\" is null))"
+        }
+      }
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {}
+  }
+}
