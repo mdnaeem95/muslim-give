@@ -5,6 +5,7 @@
   "main": "expo-router/entry",
   "dependencies": {
     "@muslim-give/domain": "workspace:*",
+    "@muslim-give/local-db": "workspace:*",
     "@muslim-give/observability": "workspace:*",
     "@muslim-give/ui-tokens": "workspace:*",
     "@types/react": "19.3.0",

@@ -3,7 +3,15 @@ import tseslint from 'typescript-eslint';
 
 /** Spec 18.1: strict-type-checked, zero warnings. Layer rules from spec 6 grow with the app. */
 export default defineConfig(
-  { ignores: ['**/coverage/**', '**/node_modules/**', '**/dist/**', '**/.expo/**'] },
+  {
+    ignores: [
+      '**/coverage/**',
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/.expo/**',
+      'packages/local-db/src/migrations.generated.ts',
+    ],
+  },
   tseslint.configs.strictTypeChecked,
   tseslint.configs.stylisticTypeChecked,
   {

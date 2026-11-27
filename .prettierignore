@@ -3,3 +3,4 @@ pnpm-lock.yaml
 coverage/
 packages/domain/src/hijri/umalqura-data.ts
 packages/local-db/migrations/meta
+packages/local-db/src/migrations.generated.ts

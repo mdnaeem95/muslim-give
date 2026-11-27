@@ -24,9 +24,7 @@ const migrationsDir = join(import.meta.dirname, '..', 'migrations');
  * applies them on launch. Jest cannot import `node:sqlite` directly, hence getBuiltinModule.
  */
 export function openMigratedDb(): TestDb {
-  const sqlite = process.getBuiltinModule('node:sqlite') as SqliteModule;
-  const db = new sqlite.DatabaseSync(':memory:');
-  db.exec('PRAGMA foreign_keys = ON');
+  const db = openRawDb();
   const files = readdirSync(migrationsDir)
     .filter((name) => name.endsWith('.sql'))
     .sort();
@@ -99,14 +97,10 @@ export function failureOf(action: () => void): string {
   return 'accepted';
 }
 
-/**
- * A SqlExecutor over an in-memory database with every migration applied, for outbox and
- * repository tests. Nested transactions use savepoints, as the app's adapter must.
- */
-export function openExecutor(): { readonly db: TestDb; readonly executor: SqlExecutor } {
-  const db = openMigratedDb();
+/** A SqlExecutor over any test database. Nested transactions use savepoints, as the app's adapter must. */
+export function executorFor(db: TestDb): SqlExecutor {
   let depth = 0;
-  const executor: SqlExecutor = {
+  return {
     run: (sql, params = []) => {
       db.prepare(sql).run(...params);
     },
@@ -127,5 +121,18 @@ export function openExecutor(): { readonly db: TestDb; readonly executor: SqlExe
       }
     },
   };
-  return { db, executor };
+}
+
+/** An empty in-memory database, no migrations applied. */
+export function openRawDb(): TestDb {
+  const sqlite = process.getBuiltinModule('node:sqlite') as SqliteModule;
+  const db = new sqlite.DatabaseSync(':memory:');
+  db.exec('PRAGMA foreign_keys = ON');
+  return db;
+}
+
+/** A SqlExecutor over an in-memory database with every migration applied, for outbox and repository tests. */
+export function openExecutor(): { readonly db: TestDb; readonly executor: SqlExecutor } {
+  const db = openMigratedDb();
+  return { db, executor: executorFor(db) };
 }
