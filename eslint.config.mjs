@@ -65,5 +65,37 @@ export default defineConfig(
     files: ['packages/domain/scripts/**', '**/*.oracle.test.ts'],
     rules: { 'no-restricted-syntax': 'off' },
   },
-  { files: ['**/*.mjs'], extends: [tseslint.configs.disableTypeChecked] },
+  {
+    // Plain JavaScript config files: no type information, and CommonJS is what Expo expects.
+    files: ['**/*.mjs', '**/*.cjs', 'apps/mobile/*.js'],
+    extends: [tseslint.configs.disableTypeChecked],
+    rules: { '@typescript-eslint/no-require-imports': 'off' },
+  },
+  {
+    // The app's pure logic stays free of React Native and Expo so it is tested in Node.
+    files: ['apps/mobile/src/lib/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['react', 'react-*', 'expo', 'expo-*', '@react-native/*'],
+              message: 'apps/mobile/src/lib is pure: no React, React Native or Expo imports.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    // The one place that reads the system clock (spec 6.2, 7.2).
+    files: ['apps/mobile/src/platform/system-clock.ts'],
+    rules: { 'no-restricted-syntax': 'off' },
+  },
+  {
+    // The development log sink prints already-redacted records.
+    files: ['apps/mobile/src/observability/console-sink.ts'],
+    rules: { 'no-console': 'off' },
+  },
 );

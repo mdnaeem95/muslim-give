@@ -140,3 +140,14 @@ Issues found and fixed while closing the PR: three strict lint rules (`prefer-op
 - Manual or device checks: none. Sentry itself is not wired in; the scrubber is tested on plain objects shaped like Sentry events, not on events from the real SDK.
 - Not verified, and why: ESLint was not run locally; the real Sentry event shape may carry fields this allow-list drops, which is the safe direction, but the first device build should be checked to confirm crash reports still contain a usable stack trace and release; product analytics are not built because decision D-18 is open
 - Spec or docs updated: ADR 011 added; spec 6.1 should show `packages/observability` (not done in this PR)
+
+## PR #13: Expo app shell (`apps/mobile`)
+
+- Requirement or rule IDs: spec 6.2 (clock provider, no component reads the system clock), 6.3 (error boundary per tab), 6.4 (five tabs in order, Dashboard default route, unknown links open the Dashboard), 6.6 (dynamic type limit, accessibility labels), 6.7 (no string literals in components, `en-SG` date format), 18.1 (logging only through the logger), 19.1 (three app IDs by `APP_ENV`), ADR 012
+- CI run: PR #13 checks (copy the numbers from the "Test evidence" summary at merge)
+- Tests: 11 in `apps/mobile/src/lib`, counted from the local run before CI
+- Coverage: the Jest threshold enforces 100% on `src/lib` in CI; screens, providers and the error boundary are not covered by unit tests yet
+- What the tests prove: the clock turns the device day into a civil date and follows midnight; dates format as "5 Mar 2027" without `Intl`; Hijri dates show the Malay month names; the translator fills placeholders, keeps unfilled ones visible and shows the key for a missing one
+- Manual or device checks: none done by the author of this PR. To run: `pnpm --filter @muslim-give/mobile bundle:check`, then a development build on one iPhone and one Android phone, and confirm the five tabs, the Dashboard showing today's Gregorian and Hijri date, and the accessibility labels with VoiceOver and TalkBack.
+- Not verified, and why: nothing here was run through Metro, a simulator or a phone (no network installs in the sandbox), so the Metro `.js` resolution, Expo Router wiring and the tab layout are untested; ESLint was not run locally; app icon, splash and Noto Sans are not bundled; component tests are not set up
+- Spec or docs updated: ADR 012 added; spec 6.4 (native tabs) and 6.1 (`packages/observability`, `packages/local-db`) should be updated in the Doc

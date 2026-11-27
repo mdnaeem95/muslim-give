@@ -7,7 +7,7 @@ The live, commentable copy is the Claude Doc "Muslim Give — Technical Design &
 
 ## Status
 
-Phase 0 (foundations) not started. See spec section 21.
+Phase 0 (foundations) in progress: domain, schema, tokens, local database, outbox, sync rules, logger and the app shell are in. See spec section 21 and `docs/evidence/phase-0.md`.
 
 ## Getting started (one-time, Phase 0)
 

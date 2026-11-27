@@ -1,0 +1,16 @@
+{
+  "tabs.dashboard.label": "Dashboard",
+  "tabs.dashboard.accessibility": "Dashboard",
+  "tabs.log.label": "Log",
+  "tabs.log.accessibility": "Log a donation",
+  "tabs.eid.label": "Eid",
+  "tabs.eid.accessibility": "Eid planner",
+  "tabs.budget.label": "Budget",
+  "tabs.budget.accessibility": "Budget",
+  "tabs.profile.label": "Profile",
+  "tabs.profile.accessibility": "Profile",
+  "dashboard.today": "Today",
+  "placeholder.coming": "This screen is built in a later phase.",
+  "error.title": "Something went wrong. Your records are safe.",
+  "error.retry": "Try again"
+}

@@ -1,0 +1,20 @@
+{
+  "name": "@muslim-give/mobile",
+  "private": true,
+  "version": "0.0.0",
+  "main": "expo-router/entry",
+  "dependencies": {
+    "@muslim-give/domain": "workspace:*",
+    "@muslim-give/observability": "workspace:*",
+    "@muslim-give/ui-tokens": "workspace:*"
+  },
+  "scripts": {
+    "start": "expo start --dev-client",
+    "ios": "expo run:ios",
+    "android": "expo run:android",
+    "bundle:check": "expo export --platform ios --platform android --output-dir .expo/export-check",
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint .",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --coverage --json --outputFile=coverage/test-results.json"
+  }
+}
