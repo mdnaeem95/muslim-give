@@ -37,3 +37,14 @@ Issues found and fixed while closing the PR: TypeScript 7 broke ts-jest and type
 - Spec or docs updated: none needed
 
 Issues found and fixed while closing the PR: three strict lint rules (`prefer-optional-chain`, `non-nullable-type-assertion-style`, `restrict-template-expressions`) were fixed after CI reported them. The local environment could not run ESLint, which is why they reached CI.
+
+## PR #3: delivery evidence process
+
+- Requirement or rule IDs: spec 18.3 and 18.5 (PR checklist, Definition of Done)
+- CI run: PR #3 checks. The first run with the new "Test evidence" step is the proof that the summary and artifact work.
+- Tests: no new tests; the existing 35 run under the new JSON reporter
+- Coverage: unchanged
+- What this proves: each CI run now records test and coverage numbers in the job summary and keeps the report for 90 days
+- Manual or device checks: none
+- Not verified, and why: the summary step has only been run on sample data locally; confirm it on the first CI run of this PR
+- Spec or docs updated: the spec's Definition of Done (section 18.5) should gain "evidence entry added" in the Claude Doc and the repo snapshot; not done in this PR
