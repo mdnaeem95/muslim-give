@@ -30,7 +30,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     userInterfaceStyle: 'light',
     ios: { bundleIdentifier: id, supportsTablet: false },
     android: { package: id },
-    plugins: ['expo-router'],
+    plugins: ['expo-router', 'expo-status-bar'],
     extra: { appEnvironment: environment },
   };
 };
