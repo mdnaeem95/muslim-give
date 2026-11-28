@@ -11,7 +11,6 @@ import {
   getDocs,
   setDoc,
   setLogLevel,
-  type Firestore,
 } from 'firebase/firestore';
 import { createEnv } from './env.js';
 import { SAMPLES, clientTimestamp, meta, type Doc } from './samples.js';
@@ -29,9 +28,9 @@ beforeEach(async () => {
   await env.clearFirestore();
 });
 
-const asAlice = (): Firestore => env.authenticatedContext('alice').firestore();
-const asBob = (): Firestore => env.authenticatedContext('bob').firestore();
-const signedOut = (): Firestore => env.unauthenticatedContext().firestore();
+const asAlice = () => env.authenticatedContext('alice').firestore();
+const asBob = () => env.authenticatedContext('bob').firestore();
+const signedOut = () => env.unauthenticatedContext().firestore();
 
 /** Writes a document as the admin SDK would, with the rules switched off. */
 async function seed(path: string, data: Doc): Promise<void> {
