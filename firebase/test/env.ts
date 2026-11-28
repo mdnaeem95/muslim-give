@@ -20,11 +20,10 @@ export function createEnv(): Promise<RulesTestEnvironment> {
 }
 
 /**
- * The testing package types the context's Firestore and Storage with its own declarations, which
- * the modular `firebase/firestore` and `firebase/storage` functions do not accept as classes. The
- * objects are the modular ones at runtime, so the conversion is made here, once.
+ * The testing package types the context's Firestore with its own declaration, which the modular
+ * `firebase/firestore` functions do not accept as a class. The object is the modular one at
+ * runtime, so the conversion is made here, once. Storage needs no cast: its type already matches.
  */
 export const firestoreOf = (context: RulesTestContext): Firestore =>
   context.firestore() as unknown as Firestore;
-export const storageOf = (context: RulesTestContext): FirebaseStorage =>
-  context.storage() as unknown as FirebaseStorage;
+export const storageOf = (context: RulesTestContext): FirebaseStorage => context.storage();
