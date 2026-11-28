@@ -24,10 +24,12 @@ export const TEXT_PAIRS: readonly TextPair[] = [
   { foreground: 'onPrimary', background: 'toastWarning', use: 'Nearing-budget toast' },
   { foreground: 'onDanger', background: 'danger', use: 'Over-budget toast and destructive label' },
   { foreground: 'primaryText', background: 'surface', use: 'Green text on cards' },
+  { foreground: 'primaryText', background: 'background', use: 'Links and buttons on the screen' },
   { foreground: 'primaryText', background: 'primaryTint', use: 'Done alert text' },
   { foreground: 'textSecondary', background: 'primaryTint', use: 'Note text on green tint' },
   { foreground: 'warningText', background: 'warningTint', use: 'Nearing-budget alert text' },
   { foreground: 'warningText', background: 'surface', use: 'Warning text on cards' },
   { foreground: 'dangerText', background: 'dangerTint', use: 'Over-budget alert text' },
   { foreground: 'dangerText', background: 'surface', use: 'Error text on cards' },
+  { foreground: 'dangerText', background: 'background', use: 'Field error text on the screen' },
 ];

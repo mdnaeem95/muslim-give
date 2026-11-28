@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { t } from '../src/i18n';
+import { sanitizeAmount } from '../src/lib/amount-input';
 import { AppText } from '../src/ui/AppText';
 import { AccentCard, Card } from '../src/ui/Card';
 import { Alert } from '../src/ui/Alert';
@@ -10,10 +11,12 @@ import { BarChart } from '../src/ui/BarChart';
 import { Chip, ChipGroup } from '../src/ui/Chip';
 import { ColumnChart } from '../src/ui/ColumnChart';
 import { ConfirmButton } from '../src/ui/ConfirmButton';
+import { CountryPicker } from '../src/ui/CountryPicker';
 import { EmptyState } from '../src/ui/EmptyState';
 import { Kpi } from '../src/ui/Kpi';
 import { ListRow } from '../src/ui/ListRow';
 import { Meter } from '../src/ui/Meter';
+import { MoneyInput } from '../src/ui/MoneyInput';
 import { Screen } from '../src/ui/Screen';
 import { Segmented } from '../src/ui/Segmented';
 import { Tag } from '../src/ui/Tag';
@@ -62,7 +65,15 @@ const RECIPIENT_ROWS = [
   spokenValue: `${String(row.value)} Singapore dollars`,
 }));
 
+const CURRENCIES = [
+  { value: 'SGD', label: 'SGD' },
+  { value: 'JPY', label: 'JPY' },
+  { value: 'KWD', label: 'KWD' },
+  { value: 'SAR', label: 'SAR' },
+] as const;
+
 type Amount = (typeof AMOUNTS)[number]['value'];
+type Currency = (typeof CURRENCIES)[number]['value'];
 type Period = 'week' | 'month' | 'year';
 
 /**
@@ -75,6 +86,11 @@ export default function GalleryScreen(): React.JSX.Element {
   const toast = useToast();
   const [amount, setAmount] = useState<Amount | null>('10');
   const [period, setPeriod] = useState<Period>('month');
+  const [currency, setCurrency] = useState<Currency>('SGD');
+  const [moneyText, setMoneyText] = useState('');
+  const [requiredText, setRequiredText] = useState('');
+  const [country, setCountry] = useState<string | null>('MY');
+  const [emptyCountry, setEmptyCountry] = useState<string | null>(null);
   if (!__DEV__) return <Redirect href="/" />;
   return (
     <Screen>
@@ -181,27 +197,27 @@ export default function GalleryScreen(): React.JSX.Element {
       </Card>
 
       <AppText variant="heading">{t('dev.toasts')}</AppText>
-      <ChipGroup
-        options={[
-          { value: 'default', label: t('dev.toast.default') },
-          { value: 'near', label: t('dev.toast.near') },
-          { value: 'over', label: t('dev.toast.over') },
-        ]}
-        value={null}
-        onChange={(tone) => {
-          toast(
-            t(
-              tone === 'default'
-                ? 'dev.toast.message'
-                : tone === 'near'
-                  ? 'dev.toast.nearMessage'
-                  : 'dev.toast.overMessage',
-            ),
-            tone,
-          );
-        }}
-        accessibilityLabel={t('dev.toasts')}
-      />
+      <Card>
+        <ListRow
+          title={t('dev.toast.default')}
+          onPress={() => {
+            toast(t('dev.toast.message'));
+          }}
+        />
+        <ListRow
+          title={t('dev.toast.near')}
+          onPress={() => {
+            toast(t('dev.toast.nearMessage'), 'near');
+          }}
+        />
+        <ListRow
+          title={t('dev.toast.over')}
+          divider={false}
+          onPress={() => {
+            toast(t('dev.toast.overMessage'), 'over');
+          }}
+        />
+      </Card>
 
       <AppText variant="heading">{t('dev.confirm')}</AppText>
       <ConfirmButton
@@ -223,6 +239,48 @@ export default function GalleryScreen(): React.JSX.Element {
       <AppText variant="heading">{t('dev.columnChart')}</AppText>
       <Card>
         <ColumnChart rows={MONTH_ROWS} highlightIndex={10} />
+      </Card>
+
+      <AppText variant="heading">{t('dev.money')}</AppText>
+      <Card>
+        <ChipGroup
+          options={CURRENCIES}
+          value={currency}
+          onChange={(next) => {
+            setCurrency(next);
+            setMoneyText(sanitizeAmount(moneyText, next));
+          }}
+          accessibilityLabel={t('dev.currencyGroup')}
+        />
+        <MoneyInput
+          label={t('dev.money.amount')}
+          value={moneyText}
+          onChangeText={setMoneyText}
+          currency={currency}
+        />
+        <MoneyInput
+          label={t('dev.money.required')}
+          value={requiredText}
+          onChangeText={setRequiredText}
+          currency="SGD"
+          error={requiredText === '' ? t('dev.money.error') : undefined}
+        />
+      </Card>
+
+      <AppText variant="heading">{t('dev.country')}</AppText>
+      <Card>
+        <CountryPicker
+          label={t('dev.country.label')}
+          value={country}
+          onChange={setCountry}
+          excludeCode="SG"
+        />
+        <CountryPicker
+          label={t('dev.country.label')}
+          value={emptyCountry}
+          onChange={setEmptyCountry}
+          error={t('dev.country.error')}
+        />
       </Card>
 
       {/* This page has no tab bar, so keep the last control clear of the home indicator. */}
