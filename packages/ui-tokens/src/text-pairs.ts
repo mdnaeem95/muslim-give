@@ -20,6 +20,7 @@ export const TEXT_PAIRS: readonly TextPair[] = [
   { foreground: 'textMuted', background: 'noteBackground', use: 'Grey note text' },
   { foreground: 'onPrimary', background: 'primary', use: 'Primary button label' },
   { foreground: 'onPrimary', background: 'primaryDark', use: 'Pressed primary button label' },
+  { foreground: 'surface', background: 'text', use: 'Default toast' },
   { foreground: 'onPrimary', background: 'toastWarning', use: 'Nearing-budget toast' },
   { foreground: 'onDanger', background: 'danger', use: 'Over-budget toast and destructive label' },
   { foreground: 'primaryText', background: 'surface', use: 'Green text on cards' },

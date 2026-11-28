@@ -19,13 +19,13 @@ export function ListRow({
   divider = true,
 }: {
   readonly title: string;
-  readonly subtitle?: string;
-  readonly trailing?: string;
+  readonly subtitle?: string | undefined;
+  readonly trailing?: string | undefined;
   /** What a screen reader says for `trailing`, e.g. "50 Singapore dollars" for "S$50". */
-  readonly trailingSpoken?: string;
-  readonly onPress?: () => void;
+  readonly trailingSpoken?: string | undefined;
+  readonly onPress?: (() => void) | undefined;
   /** The 1 px rule under the row. Turn it off for the last row inside a card. */
-  readonly divider?: boolean;
+  readonly divider?: boolean | undefined;
 }): React.JSX.Element {
   const { colors, space } = useTheme();
   const content = (
