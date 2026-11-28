@@ -48,12 +48,10 @@ export function CountryPicker({
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const chosen = value === null ? null : findCountry(value);
-  const sections = countryListSections(query, excludeCode).map(
-    (section): PickerSection => ({
-      id: section.id,
-      data: section.countries,
-    }),
-  );
+  const sections = countryListSections(query, excludeCode).map((section): PickerSection => ({
+    id: section.id,
+    data: section.countries,
+  }));
   const close = (): void => {
     setOpen(false);
     setQuery('');
