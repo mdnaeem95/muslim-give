@@ -11,8 +11,9 @@ import {
   getDocs,
   setDoc,
   setLogLevel,
+  type Firestore,
 } from 'firebase/firestore';
-import { createEnv } from './env.js';
+import { createEnv, firestoreOf } from './env.js';
 import { SAMPLES, clientTimestamp, meta, type Doc } from './samples.js';
 
 let env: RulesTestEnvironment;
@@ -28,14 +29,14 @@ beforeEach(async () => {
   await env.clearFirestore();
 });
 
-const asAlice = () => env.authenticatedContext('alice').firestore();
-const asBob = () => env.authenticatedContext('bob').firestore();
-const signedOut = () => env.unauthenticatedContext().firestore();
+const asAlice = (): Firestore => firestoreOf(env.authenticatedContext('alice'));
+const asBob = (): Firestore => firestoreOf(env.authenticatedContext('bob'));
+const signedOut = (): Firestore => firestoreOf(env.unauthenticatedContext());
 
 /** Writes a document as the admin SDK would, with the rules switched off. */
 async function seed(path: string, data: Doc): Promise<void> {
   await env.withSecurityRulesDisabled(async (context) => {
-    await setDoc(doc(context.firestore(), path), data);
+    await setDoc(doc(firestoreOf(context), path), data);
   });
 }
 

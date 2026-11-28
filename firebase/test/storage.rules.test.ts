@@ -4,7 +4,7 @@ import {
   type RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
 import { deleteObject, getBytes, ref, uploadBytes, type FirebaseStorage } from 'firebase/storage';
-import { createEnv } from './env.js';
+import { createEnv, storageOf } from './env.js';
 
 let env: RulesTestEnvironment;
 
@@ -18,9 +18,9 @@ beforeEach(async () => {
   await env.clearStorage();
 });
 
-const asAlice = (): FirebaseStorage => env.authenticatedContext('alice').storage();
-const asBob = (): FirebaseStorage => env.authenticatedContext('bob').storage();
-const signedOut = (): FirebaseStorage => env.unauthenticatedContext().storage();
+const asAlice = (): FirebaseStorage => storageOf(env.authenticatedContext('alice'));
+const asBob = (): FirebaseStorage => storageOf(env.authenticatedContext('bob'));
+const signedOut = (): FirebaseStorage => storageOf(env.unauthenticatedContext());
 
 const RECEIPT = 'users/alice/receipts/receipt-1';
 const TEN_MB = 10 * 1024 * 1024;
@@ -29,7 +29,7 @@ const file = (bytes: number): Uint8Array => new Uint8Array(bytes);
 
 async function seed(path: string): Promise<void> {
   await env.withSecurityRulesDisabled(async (context) => {
-    await uploadBytes(ref(context.storage(), path), file(10), { contentType: 'image/jpeg' });
+    await uploadBytes(ref(storageOf(context), path), file(10), { contentType: 'image/jpeg' });
   });
 }
 
