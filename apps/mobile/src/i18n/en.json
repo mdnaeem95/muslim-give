@@ -70,5 +70,21 @@
   "dev.confirm.message": "This cannot be undone.",
   "dev.confirm.yes": "Delete",
   "dev.confirm.no": "Cancel",
-  "dev.confirm.done": "Entry deleted"
+  "dev.confirm.done": "Entry deleted",
+  "money.amountLabel": "Amount in {currency}",
+  "country.title": "Choose a country",
+  "country.none": "Choose a country",
+  "country.hint": "Opens a searchable list of countries",
+  "country.search": "Search countries",
+  "country.close": "Close",
+  "country.section.common": "Common",
+  "country.section.all": "All countries",
+  "country.noMatch": "No country matches “{query}”.",
+  "dev.money": "Money input",
+  "dev.money.amount": "Amount",
+  "dev.money.error": "Enter an amount",
+  "dev.currencyGroup": "Currency for the amount box",
+  "dev.country": "Country picker",
+  "dev.country.label": "Country",
+  "dev.country.error": "Type the country"
 }
