@@ -37,12 +37,7 @@ export function Alert({
         borderLeftColor: colors[style.accent],
       }}
     >
-      <Icon
-        ios={style.icon.ios}
-        android={style.icon.android}
-        color={colors[style.text]}
-        size={ICON_SIZE}
-      />
+      <Icon name={style.icon} color={colors[style.text]} size={ICON_SIZE} />
       <View style={{ flex: 1 }}>
         <AppText variant="caption" color={style.text}>
           {children}

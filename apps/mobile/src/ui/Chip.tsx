@@ -49,7 +49,7 @@ export function Chip({
   onPress,
 }: {
   readonly label: string;
-  readonly accessibilityLabel?: string;
+  readonly accessibilityLabel?: string | undefined;
   readonly selected: boolean;
   readonly onPress: () => void;
 }): React.JSX.Element {

@@ -11,7 +11,8 @@ export interface AlertStyle {
   readonly prefixKey: 'alert.near.prefix' | 'alert.over.prefix' | 'alert.done.prefix';
 }
 
-export const ALERT_STYLES: Readonly<Record<AlertLevel, AlertStyle>> = {
+/** `as const satisfies` keeps each icon name as a literal, so the compiler can check it against the symbol sets. */
+export const ALERT_STYLES = {
   near: {
     background: 'warningTint',
     accent: 'warning',
@@ -33,4 +34,4 @@ export const ALERT_STYLES: Readonly<Record<AlertLevel, AlertStyle>> = {
     icon: { ios: 'checkmark.circle', android: 'check_circle' },
     prefixKey: 'alert.done.prefix',
   },
-};
+} as const satisfies Readonly<Record<AlertLevel, AlertStyle>>;
