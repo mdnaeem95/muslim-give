@@ -6,7 +6,7 @@
   "scripts": {
     "typecheck": "tsc -p tsconfig.json",
     "lint": "eslint .",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.mjs --json --outputFile=coverage/test-results.json",
+    "test": "mkdir -p coverage && NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.mjs --json --outputFile=coverage/test-results.json",
     "test:rules": "firebase emulators:exec --only firestore,storage --project demo-muslim-give \"NODE_OPTIONS=--experimental-vm-modules jest --config jest.rules.config.mjs\""
   },
   "dependencies": {
