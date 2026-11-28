@@ -14,6 +14,7 @@ export const TEXT_PAIRS: readonly TextPair[] = [
   { foreground: 'text', background: 'surface', use: 'Body text on cards' },
   { foreground: 'text', background: 'background', use: 'Body text on the screen' },
   { foreground: 'textSecondary', background: 'surface', use: 'Labels' },
+  { foreground: 'textSecondary', background: 'background', use: 'Neutral tag text' },
   { foreground: 'textMuted', background: 'surface', use: 'Hints and captions on cards' },
   { foreground: 'textMuted', background: 'background', use: 'Captions on the screen' },
   { foreground: 'textMuted', background: 'noteBackground', use: 'Grey note text' },
