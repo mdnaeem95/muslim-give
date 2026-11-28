@@ -13,8 +13,11 @@
     "@muslim-give/domain": "workspace:*"
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "6.0.0",
     "@types/jest": "30.0.0",
     "@types/node": "22",
+    "firebase": "13.4.0",
+    "firebase-tools": "15.37.0",
     "jest": "30.5.2",
     "ts-jest": "29.4.15",
     "typescript": "5.9"
