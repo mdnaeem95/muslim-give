@@ -3,8 +3,11 @@ import { StatusBar } from 'expo-status-bar';
 import { ClockProvider } from '../src/clock/ClockProvider';
 import { DatabaseProvider } from '../src/data/DatabaseProvider';
 import { createClock } from '../src/lib/clock';
+import { startCrashReporting } from '../src/observability/sentry';
 import { readSystemDay } from '../src/platform/system-clock';
 import { ToastProvider } from '../src/ui/Toast';
+
+startCrashReporting();
 
 const systemClock = createClock(readSystemDay);
 
