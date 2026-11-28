@@ -18,6 +18,7 @@ Every dependency needs an entry (spec 18.4): need, maintenance, New Architecture
 | fast-check                                                                | domain dev   | Property tests (spec 17)                                    | MIT        |
 | @firebase/rules-unit-testing, firebase                                    | firebase dev | Security rules tests against the emulator (spec 17, 12.3)   | Apache-2.0 |
 | firebase-tools                                                            | firebase dev | Emulator suite and rules deployment (spec 12.1, 19)         | MIT        |
+| @sentry/react-native, expo-dev-client                                     | mobile       | Crash reports (spec 20.1, ADR 019) and device dev builds    | MIT        |
 | prettier                                                                  | root dev     | Formatting                                                  | MIT        |
 | eslint, typescript-eslint                                                 | root dev     | Linting                                                     | MIT        |
 | @commitlint/cli, @commitlint/config-conventional                          | root dev     | Conventional Commits (18.2)                                 | MIT        |
