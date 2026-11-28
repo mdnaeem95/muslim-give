@@ -23,12 +23,14 @@ The first `test:rules` downloads the emulator jars (about 100 MB), so it is slow
 
 Project IDs are global, so one may be taken. If `firebase projects:create` says so, pick another ID and tell Claude so `.firebaserc` and spec 19.1 can be changed together.
 
+Display names may contain only letters, numbers, spaces, hyphens, single quotes and exclamation marks. Parentheses are refused (HTTP 400, "project display name contains invalid characters").
+
 ```sh
 pnpm --filter @muslim-give/firebase exec firebase login
 cd firebase
-npx firebase projects:create muslimgive-dev --display-name "Muslim Give (dev)"
-npx firebase projects:create muslimgive-staging --display-name "Muslim Give (staging)"
-npx firebase projects:create muslimgive-prod --display-name "Muslim Give (prod)"
+npx firebase projects:create muslimgive-dev --display-name "Muslim Give Dev"
+npx firebase projects:create muslimgive-staging --display-name "Muslim Give Staging"
+npx firebase projects:create muslimgive-prod --display-name "Muslim Give Prod"
 ```
 
 ## 4. In the Firebase console, for each project (dev, staging, prod)
