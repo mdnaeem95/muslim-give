@@ -1,0 +1,18 @@
+rules_version = '2';
+
+// Muslim Give Storage rules (spec 12.4). A receipt belongs to one user and cannot be edited: it is
+// uploaded once, read by its owner, and deleted by its owner or by a Cloud Function. The object
+// name is the receipt ID, so no names or amounts appear in paths. Every other path is denied.
+// The per-user quota and the real file type (magic bytes) are checked by `onReceiptUploaded`.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /users/{uid}/receipts/{receiptId} {
+      allow read, delete: if request.auth != null && request.auth.uid == uid;
+      allow create: if request.auth != null && request.auth.uid == uid
+        && request.resource.size <= 10 * 1024 * 1024
+        && request.resource.contentType.matches(
+          'image/(jpeg|png|webp)|application/pdf|message/rfc822|application/vnd[.]ms-outlook|application/msword|application/vnd[.]openxmlformats-officedocument[.]wordprocessingml[.]document');
+      allow update: if false;
+    }
+  }
+}
