@@ -1,4 +1,10 @@
-import { countryListSections, currencyName, findCountry, type Country } from '@muslim-give/domain';
+import {
+  countryListSections,
+  currencyName,
+  findCountry,
+  type Country,
+  type CountryListSectionId,
+} from '@muslim-give/domain';
 import { ruleWidth } from '@muslim-give/ui-tokens';
 import { useState } from 'react';
 import { Modal, Pressable, SectionList, TextInput, View } from 'react-native';
@@ -42,15 +48,16 @@ export function CountryPicker({
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const chosen = value === null ? null : findCountry(value);
-  const sections = countryListSections(query, excludeCode).map((section): PickerSection => ({
-    id: section.id,
-    data: section.countries,
-  }));
+  const sections = countryListSections(query, excludeCode).map(
+    (section): PickerSection => ({
+      id: section.id,
+      data: section.countries,
+    }),
+  );
   const close = (): void => {
     setOpen(false);
     setQuery('');
   };
-  const sectionTitle = { common: t('country.section.common'), all: t('country.section.all') };
   return (
     <View style={{ gap: space.xxs }}>
       <AppText variant="caption" color="textSecondary" weight="semibold">
@@ -159,7 +166,9 @@ export function CountryPicker({
               section.id === 'results' ? null : (
                 <View style={{ paddingTop: space.sm, backgroundColor: colors.background }}>
                   <AppText variant="small" color="textSecondary" weight="bold">
-                    {sectionTitle[section.id]}
+                    {section.id === 'common'
+                      ? t('country.section.common')
+                      : t('country.section.all')}
                   </AppText>
                 </View>
               )
