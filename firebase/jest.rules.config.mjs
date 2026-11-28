@@ -8,4 +8,7 @@ export default {
   transform: { '^.+\\.ts$': ['ts-jest', { useESM: true }] },
   testMatch: ['<rootDir>/test/**/*.rules.test.ts'],
   testTimeout: 20000,
+  // Both suites share one emulator, and each one reloads the rules and clears data in its set-up.
+  // Run in parallel they race (a Storage upload was refused while the Firestore suite started).
+  maxWorkers: 1,
 };

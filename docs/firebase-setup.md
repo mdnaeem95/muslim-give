@@ -52,3 +52,4 @@ Do the same with `--project staging` when staging is ready. Production is deploy
 - Firestore and Storage show **asia-southeast1** in their settings.
 - In the console's Rules tab, the deployed rules equal `firebase/firestore.rules` and `firebase/storage.rules`.
 - Tell Claude the three project IDs and that the console shows Singapore, and it will fill them into the evidence entry.
+- Overwrite check, once, on the dev project (the emulator cannot test this, see ADR 018): upload a receipt, then upload to the same path again. The second upload must be refused. Claude will give you the exact steps when the app can upload receipts.

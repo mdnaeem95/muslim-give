@@ -3,7 +3,14 @@ import {
   assertSucceeds,
   type RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
-import { deleteObject, getBytes, ref, uploadBytes, type FirebaseStorage } from 'firebase/storage';
+import {
+  deleteObject,
+  getBytes,
+  ref,
+  updateMetadata,
+  uploadBytes,
+  type FirebaseStorage,
+} from 'firebase/storage';
 import { createEnv, storageOf } from './env.js';
 
 let env: RulesTestEnvironment;
@@ -98,9 +105,14 @@ describe('users/{uid}/receipts/{receiptId}', () => {
     await assertFails(getBytes(ref(signedOut(), RECEIPT)));
   });
 
-  it('never lets anyone overwrite a receipt', async () => {
+  // The Storage emulator checks every upload as a `create`, so it cannot tell an overwrite from a new
+  // file (firebase-tools 15.37.0, storage/files.js). It does check a metadata change as an `update`,
+  // so that is what this test uses. `allow update: if false` is also asserted in drift.test.ts, and
+  // the real service applies it to overwrites (ADR 018 says how that is checked).
+  it('never lets anyone update a receipt', async () => {
     await seed(RECEIPT);
-    await assertFails(uploadBytes(ref(asAlice(), RECEIPT), file(20), { contentType: 'image/png' }));
+    await assertFails(updateMetadata(ref(asAlice(), RECEIPT), { contentType: 'image/png' }));
+    await assertFails(updateMetadata(ref(asBob(), RECEIPT), { contentType: 'image/png' }));
   });
 
   it('lets only the owner delete it', async () => {
