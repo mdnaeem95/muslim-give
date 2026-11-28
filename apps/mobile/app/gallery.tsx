@@ -88,6 +88,7 @@ export default function GalleryScreen(): React.JSX.Element {
   const [period, setPeriod] = useState<Period>('month');
   const [currency, setCurrency] = useState<Currency>('SGD');
   const [moneyText, setMoneyText] = useState('');
+  const [requiredText, setRequiredText] = useState('');
   const [country, setCountry] = useState<string | null>('MY');
   const [emptyCountry, setEmptyCountry] = useState<string | null>(null);
   if (!__DEV__) return <Redirect href="/" />;
@@ -258,11 +259,11 @@ export default function GalleryScreen(): React.JSX.Element {
           currency={currency}
         />
         <MoneyInput
-          label={t('dev.money.amount')}
-          value=""
-          onChangeText={() => undefined}
+          label={t('dev.money.required')}
+          value={requiredText}
+          onChangeText={setRequiredText}
           currency="SGD"
-          error={t('dev.money.error')}
+          error={requiredText === '' ? t('dev.money.error') : undefined}
         />
       </Card>
 

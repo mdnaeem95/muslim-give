@@ -82,6 +82,7 @@
   "country.noMatch": "No country matches “{query}”.",
   "dev.money": "Money input",
   "dev.money.amount": "Amount",
+  "dev.money.required": "Amount (error shows while empty)",
   "dev.money.error": "Enter an amount",
   "dev.currencyGroup": "Currency for the amount box",
   "dev.country": "Country picker",
