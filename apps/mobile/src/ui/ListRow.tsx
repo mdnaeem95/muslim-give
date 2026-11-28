@@ -16,6 +16,7 @@ export function ListRow({
   trailing,
   trailingSpoken,
   onPress,
+  divider = true,
 }: {
   readonly title: string;
   readonly subtitle?: string;
@@ -23,6 +24,8 @@ export function ListRow({
   /** What a screen reader says for `trailing`, e.g. "50 Singapore dollars" for "S$50". */
   readonly trailingSpoken?: string;
   readonly onPress?: () => void;
+  /** The 1 px rule under the row. Turn it off for the last row inside a card. */
+  readonly divider?: boolean;
 }): React.JSX.Element {
   const { colors, space } = useTheme();
   const content = (
@@ -47,7 +50,7 @@ export function ListRow({
     alignItems: 'center',
     gap: space.sm,
     paddingVertical: space.sm,
-    borderBottomWidth: ruleWidth,
+    borderBottomWidth: divider ? ruleWidth : 0,
     borderBottomColor: colors.line,
   } as const;
   const label = joinLabel([title, subtitle, trailingSpoken ?? trailing]);

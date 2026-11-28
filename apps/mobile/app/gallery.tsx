@@ -1,6 +1,7 @@
 import { Redirect, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Pressable } from 'react-native';
+import { Pressable, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { t } from '../src/i18n';
 import { AppText } from '../src/ui/AppText';
 import { AccentCard, Card } from '../src/ui/Card';
@@ -31,6 +32,7 @@ type Period = 'week' | 'month' | 'year';
  */
 export default function GalleryScreen(): React.JSX.Element {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [amount, setAmount] = useState<Amount | null>('10');
   const [period, setPeriod] = useState<Period>('month');
   if (!__DEV__) return <Redirect href="/" />;
@@ -84,6 +86,7 @@ export default function GalleryScreen(): React.JSX.Element {
           trailing="S$1,250"
           trailingSpoken="1,250 Singapore dollars"
           onPress={() => undefined}
+          divider={false}
         />
       </Card>
 
@@ -112,6 +115,8 @@ export default function GalleryScreen(): React.JSX.Element {
         onChange={setPeriod}
         accessibilityLabel={t('dev.periodGroup')}
       />
+      {/* This page has no tab bar, so keep the last control clear of the home indicator. */}
+      <View style={{ height: insets.bottom }} />
     </Screen>
   );
 }
