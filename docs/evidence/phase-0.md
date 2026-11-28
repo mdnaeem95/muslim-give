@@ -175,3 +175,14 @@ Issues found and fixed while closing the PR: three strict lint rules (`prefer-op
 - Manual or device checks: author's check on the simulator. Open each of the five tabs at the default and at the largest text size (`xcrun simctl ui booted content_size accessibility-extra-extra-extra-large`) and confirm: five different icons, no cut-off heading, content clear of the status bar and the notch. Repeat on Android.
 - Not verified, and why: the `expo-symbols` types and names (SF Symbol and Material Symbol names are checked by `tsc` only on the author's machine), and nothing was run in a simulator or on Android; ESLint was not run locally
 - Spec or docs updated: ADR 014 added
+
+## PR #16: shared UI components, batch 1
+
+- Requirement or rule IDs: spec 6.5 (components, colour never the only signal, contrast pairs), 6.6 (spoken labels, 200% text, touch targets, radio-group semantics), ADR 015
+- CI run: PR #16 checks (copy the numbers from the "Test evidence" summary at merge)
+- Tests: 8 new in `apps/mobile/src/lib` (alert levels, spoken labels), plus 2 new contrast cases (one new text pair, light and dark), counted from the local run before CI
+- Coverage: the Jest threshold enforces 100% on `src/lib` in CI
+- What the tests prove: the three alert levels each have a different icon on each platform and a different spoken prefix; each alert's text and background colours are a pair the contrast test checks, and exist in both palettes; a row's spoken label joins its parts and skips empty ones; the new neutral tag pair meets 4.5:1 in light and dark
+- Manual or device checks: author's check on the simulator. Open Profile, then "Component gallery (development only)". At the default text size, confirm each component looks right. Then set the largest size (`xcrun simctl ui booted content_size accessibility-extra-extra-extra-large`) and confirm the long label wraps, the amount stays whole, and nothing is cut off. With VoiceOver, confirm the chips read as "10 Singapore dollars, selected, radio button" and an alert starts with its level.
+- Not verified, and why: no component was rendered (the sandbox has no React Native types or simulator), so layout, `expo-symbols` icon names and the accessibility behaviour are unconfirmed until your typecheck and device run; ESLint was not run locally
+- Spec or docs updated: ADR 015 added
