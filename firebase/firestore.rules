@@ -1,0 +1,313 @@
+rules_version = '2';
+
+// Muslim Give Firestore rules (spec 12.3). Owner-only access under users/{uid}, every write checked
+// for shape and size, last writer wins by hybrid logical clock, and no client deletes anywhere:
+// deletion is a tombstone (`_deleted: true`), and hard deletes are done by Cloud Functions with
+// admin access. Anything not matched below is denied. Tests: firebase/test.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function owns(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    // ---- Code lists. firebase/test/drift.test.ts keeps each one equal to packages/domain/src/codes.ts.
+    function categories() { return ['individual', 'mosque', 'charity']; }
+    function relationships() { return ['father', 'mother', 'both_parents', 'spouse', 'kids', 'siblings', 'grandparents', 'uncle', 'aunt', 'cousins', 'nephew', 'niece', 'distant_relative', 'friends', 'stranger']; }
+    function sides() { return ['mine', 'spouse']; }
+    function lines() { return ['paternal', 'maternal']; }
+    function occasions() { return ['newborn', 'cukur_rambut', 'visiting_sick', 'death_funeral', 'birthday', 'anniversary', 'wedding', 'umrah_haj_send_off', 'doa_selamat', 'doa_tahlil', 'friday_prayer', 'subuh', 'zohor', 'asar', 'maghrib', 'isyak', 'tarawih', 'eid_prayer', 'ramadan', 'laylatul_qadr', 'eid_al_fitr', 'day_of_arafah', 'eid_al_adha', 'awal_muharram', 'ashura', 'mawlid_nabi', 'isra_miraj', 'nisfu_syaban', 'none', 'appeal_emergency', 'other']; }
+    function givingTypes() { return ['sadaqah', 'zakat_fitrah', 'zakat_harta', 'infaq', 'wakaf', 'fidyah', 'eid_money', 'hadiah', 'other']; }
+    function onBehalf() { return ['self', 'late_father', 'late_mother', 'late_parents', 'other']; }
+    function sources() { return ['manual', 'recurring', 'eid_person', 'eid_packet', 'repeat_friday', 'reminder']; }
+    function maritalStatuses() { return ['single', 'married']; }
+    function modes() { return ['auto', 'confirm']; }
+    function ruleStatuses() { return ['active', 'paused', 'stopped']; }
+    function occurrenceStatuses() { return ['pending', 'logged', 'declined', 'skipped']; }
+    function personGroups() { return ['kids', 'families', 'others']; }
+    function packetKeys() { return ['kids', 'elderly']; }
+
+    // ---- Field checks. `d` is the incoming document. A required field that is missing makes the
+    // ---- whole rule fail; an optional one may be missing or null.
+    function has(d, key) {
+      return key in d;
+    }
+    function text(d, key, max) {
+      return has(d, key) && d[key] is string && d[key].size() <= max;
+    }
+    function optText(d, key, max) {
+      return !has(d, key) || d[key] == null || (d[key] is string && d[key].size() <= max);
+    }
+    function pick(d, key, codes) {
+      return has(d, key) && d[key] in codes;
+    }
+    function optPick(d, key, codes) {
+      return !has(d, key) || d[key] == null || d[key] in codes;
+    }
+    function whole(d, key, min, max) {
+      return has(d, key) && d[key] is int && d[key] >= min && d[key] <= max;
+    }
+    function optWhole(d, key, min, max) {
+      return !has(d, key) || d[key] == null || (d[key] is int && d[key] >= min && d[key] <= max);
+    }
+    function flag(d, key) {
+      return has(d, key) && d[key] is bool;
+    }
+    function matchesText(d, key, pattern) {
+      return has(d, key) && d[key] is string && d[key].matches(pattern);
+    }
+    function optMatchesText(d, key, pattern) {
+      return !has(d, key) || d[key] == null || (d[key] is string && d[key].matches(pattern));
+    }
+    function amount(d, key) {
+      return whole(d, key, 1, 9007199254740991);
+    }
+    function amountOrZero(d, key) {
+      return whole(d, key, 0, 9007199254740991);
+    }
+    function currency(d, key) {
+      return matchesText(d, key, '^[A-Z]{3}$');
+    }
+    function country(d, key) {
+      return matchesText(d, key, '^[A-Z]{2}$');
+    }
+    function civilDate(d, key) {
+      return matchesText(d, key, '^[0-9]{4}-[0-9]{2}-[0-9]{2}$');
+    }
+    function monthKey(d, key) {
+      return matchesText(d, key, '^[0-9]{4}-[0-9]{2}$');
+    }
+
+    // ---- Sync columns carried by every synced record (spec 7.6, 8.2).
+    function metaKeys() {
+      return ['id', 'createdAt', 'updatedAt', '_hlc', '_deleted', '_deviceId', '_schema', '_serverUpdatedAt'];
+    }
+    function meta(d, id) {
+      return has(d, 'id') && d.id == id
+        && text(d, 'createdAt', 40) && text(d, 'updatedAt', 40)
+        && has(d, '_hlc') && d._hlc is string && d._hlc.size() >= 1 && d._hlc.size() <= 64
+        && flag(d, '_deleted')
+        && has(d, '_deviceId') && d._deviceId is string && d._deviceId.size() >= 1 && d._deviceId.size() <= 64
+        && whole(d, '_schema', 1, 1000)
+        && has(d, '_serverUpdatedAt') && d._serverUpdatedAt == request.time;
+    }
+    // The server is the final referee of last-writer-wins (spec 8.3): an older clock never wins.
+    function newer(d) {
+      return resource == null || d._hlc > resource.data._hlc;
+    }
+    // Meta, allowed keys, then the record's own checks, for every synced document.
+    function synced(d, id, own) {
+      return meta(d, id) && d.keys().hasOnly(metaKeys().concat(own)) && newer(d);
+    }
+
+    // ---- Record shapes (spec 7.5, camelCase mirror of each table).
+    function recipientKeys() {
+      return ['category', 'recipientName', 'recipientRefId', 'relationship', 'relationshipSide', 'relationshipLine'];
+    }
+    function recipient(d) {
+      return pick(d, 'category', categories())
+        && optText(d, 'recipientName', 80) && optText(d, 'recipientRefId', 100)
+        && optPick(d, 'relationship', relationships())
+        && optPick(d, 'relationshipSide', sides())
+        && optPick(d, 'relationshipLine', lines());
+    }
+    function descriptionKeys() {
+      return recipientKeys().concat(['occasion', 'occasionOther', 'givingType', 'onBehalf', 'onBehalfName', 'note']);
+    }
+    function description(d) {
+      return recipient(d)
+        && pick(d, 'occasion', occasions()) && optText(d, 'occasionOther', 60)
+        && pick(d, 'givingType', givingTypes())
+        && pick(d, 'onBehalf', onBehalf()) && optText(d, 'onBehalfName', 60)
+        && optText(d, 'note', 120);
+    }
+
+    function donationKeys() {
+      return descriptionKeys().concat(['date', 'amountMinor', 'currency', 'countryCode', 'source',
+        'recurringRuleId', 'occurrenceMonth', 'eidPlanId', 'eidPersonId', 'eidPacketGroup']);
+    }
+    function donation(d) {
+      return description(d)
+        && civilDate(d, 'date') && amount(d, 'amountMinor') && currency(d, 'currency') && country(d, 'countryCode')
+        && pick(d, 'source', sources())
+        && optText(d, 'recurringRuleId', 100) && optMatchesText(d, 'occurrenceMonth', '^[0-9]{4}-[0-9]{2}$')
+        && optText(d, 'eidPlanId', 100) && optText(d, 'eidPersonId', 100)
+        && optPick(d, 'eidPacketGroup', packetKeys());
+    }
+
+    function receiptKeys() {
+      return ['donationId', 'fileName', 'mimeType', 'sizeBytes', 'sha256', 'width', 'height'];
+    }
+    function receipt(d) {
+      return text(d, 'donationId', 100) && text(d, 'fileName', 100) && text(d, 'mimeType', 100)
+        && whole(d, 'sizeBytes', 1, 10485760)
+        && matchesText(d, 'sha256', '^[0-9a-f]{64}$')
+        && optWhole(d, 'width', 1, 100000) && optWhole(d, 'height', 1, 100000);
+    }
+
+    function recurringRuleKeys() {
+      return descriptionKeys().concat(['amountMinor', 'currency', 'countryCode', 'dayOfMonth', 'startMonth',
+        'mode', 'status', 'resumeFromMonth', 'backfillDecided']);
+    }
+    function recurringRule(d) {
+      return description(d)
+        && amount(d, 'amountMinor') && currency(d, 'currency') && country(d, 'countryCode')
+        && whole(d, 'dayOfMonth', 1, 31) && monthKey(d, 'startMonth')
+        && pick(d, 'mode', modes()) && pick(d, 'status', ruleStatuses())
+        && optMatchesText(d, 'resumeFromMonth', '^[0-9]{4}-[0-9]{2}$')
+        && flag(d, 'backfillDecided');
+    }
+
+    function recurringOccurrenceKeys() {
+      return ['ruleId', 'month', 'dueDate', 'status', 'amountMinor', 'currency', 'donationId'];
+    }
+    function recurringOccurrence(d) {
+      return text(d, 'ruleId', 100) && monthKey(d, 'month') && civilDate(d, 'dueDate')
+        && pick(d, 'status', occurrenceStatuses())
+        && amount(d, 'amountMinor') && currency(d, 'currency')
+        && optText(d, 'donationId', 100);
+    }
+
+    function reminderKeys() {
+      return recipientKeys().concat(['label', 'monthDay', 'occasion', 'lastAmountMinor', 'lastCurrency',
+        'lastDate', 'sourceDonationId']);
+    }
+    function reminder(d) {
+      return recipient(d)
+        && text(d, 'label', 40) && matchesText(d, 'monthDay', '^[0-9]{2}-[0-9]{2}$')
+        && pick(d, 'occasion', occasions())
+        && amount(d, 'lastAmountMinor') && currency(d, 'lastCurrency') && civilDate(d, 'lastDate')
+        && optText(d, 'sourceDonationId', 100);
+    }
+
+    function eidPlanKeys() {
+      return ['year', 'budgetMinor', 'currency'];
+    }
+    function eidPlan(d) {
+      return whole(d, 'year', 1900, 9999) && amountOrZero(d, 'budgetMinor') && currency(d, 'currency');
+    }
+
+    function eidPersonKeys() {
+      return ['planId', 'name', 'relationship', 'relationshipSide', 'relationshipLine', 'group',
+        'amountMinor', 'donationId'];
+    }
+    function eidPerson(d) {
+      return text(d, 'planId', 100) && text(d, 'name', 40)
+        && pick(d, 'relationship', relationships())
+        && optPick(d, 'relationshipSide', sides()) && optPick(d, 'relationshipLine', lines())
+        && pick(d, 'group', personGroups())
+        && amount(d, 'amountMinor') && optText(d, 'donationId', 100);
+    }
+
+    function eidPacketGroupKeys() {
+      return ['planId', 'groupKey', 'count', 'amountEachMinor'];
+    }
+    function eidPacketGroup(d) {
+      return text(d, 'planId', 100) && pick(d, 'groupKey', packetKeys())
+        && whole(d, 'count', 0, 999) && amountOrZero(d, 'amountEachMinor');
+    }
+
+    function budgetKeys() {
+      return ['monthlyAmountMinor', 'currency'];
+    }
+    function budget(d) {
+      return amountOrZero(d, 'monthlyAmountMinor') && currency(d, 'currency');
+    }
+    function profileKeys() {
+      return ['name', 'maritalStatus', 'homeCountryCode', 'homeCurrency', 'hijriAdjust', 'fridayReminder',
+        'fridayDismissedDate', 'welcomeSeen'];
+    }
+    function profile(d) {
+      return text(d, 'name', 30) && optPick(d, 'maritalStatus', maritalStatuses())
+        && country(d, 'homeCountryCode') && currency(d, 'homeCurrency')
+        && pick(d, 'hijriAdjust', [-1, 0, 1])
+        && flag(d, 'fridayReminder')
+        && optMatchesText(d, 'fridayDismissedDate', '^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && flag(d, 'welcomeSeen');
+    }
+    function promptStateKeys() {
+      return ['timesAsked', 'lastAskedAt'];
+    }
+    function promptState(d) {
+      return whole(d, 'timesAsked', 0, 2) && optText(d, 'lastAskedAt', 40);
+    }
+
+    // ---- Paths.
+    match /users/{uid} {
+      allow read: if owns(uid);
+      allow create, update: if owns(uid)
+        && request.resource.data.keys().hasOnly(['schemaVersion', 'createdAt', 'lastSeenAt'])
+        && whole(request.resource.data, 'schemaVersion', 1, 1000)
+        && optText(request.resource.data, 'createdAt', 40)
+        && optText(request.resource.data, 'lastSeenAt', 40);
+
+      match /donations/{id} {
+        allow read: if owns(uid);
+        allow create, update: if owns(uid)
+          && synced(request.resource.data, id, donationKeys()) && donation(request.resource.data);
+      }
+      match /receipts/{id} {
+        allow read: if owns(uid);
+        allow create, update: if owns(uid)
+          && synced(request.resource.data, id, receiptKeys()) && receipt(request.resource.data);
+      }
+      match /recurringRules/{id} {
+        allow read: if owns(uid);
+        allow create, update: if owns(uid)
+          && synced(request.resource.data, id, recurringRuleKeys()) && recurringRule(request.resource.data);
+      }
+      match /recurringOccurrences/{id} {
+        allow read: if owns(uid);
+        allow create, update: if owns(uid)
+          && synced(request.resource.data, id, recurringOccurrenceKeys()) && recurringOccurrence(request.resource.data);
+      }
+      match /reminders/{id} {
+        allow read: if owns(uid);
+        allow create, update: if owns(uid)
+          && synced(request.resource.data, id, reminderKeys()) && reminder(request.resource.data);
+      }
+      match /eidPlans/{id} {
+        allow read: if owns(uid);
+        allow create, update: if owns(uid)
+          && synced(request.resource.data, id, eidPlanKeys()) && eidPlan(request.resource.data);
+      }
+      match /eidPeople/{id} {
+        allow read: if owns(uid);
+        allow create, update: if owns(uid)
+          && synced(request.resource.data, id, eidPersonKeys()) && eidPerson(request.resource.data);
+      }
+      match /eidPacketGroups/{id} {
+        allow read: if owns(uid);
+        allow create, update: if owns(uid)
+          && synced(request.resource.data, id, eidPacketGroupKeys()) && eidPacketGroup(request.resource.data);
+      }
+      match /singletons/budget {
+        allow read: if owns(uid);
+        allow create, update: if owns(uid)
+          && synced(request.resource.data, 'budget', budgetKeys()) && budget(request.resource.data);
+      }
+      match /singletons/profile {
+        allow read: if owns(uid);
+        allow create, update: if owns(uid)
+          && synced(request.resource.data, 'profile', profileKeys()) && profile(request.resource.data);
+      }
+      match /singletons/promptState {
+        allow read: if owns(uid);
+        allow create, update: if owns(uid)
+          && synced(request.resource.data, 'prompt_state', promptStateKeys()) && promptState(request.resource.data);
+      }
+    }
+
+    // Server-managed data: anyone may read, only the admin SDK (Cloud Functions) may write.
+    match /reference/{listId} {
+      allow read: if true;
+    }
+    match /officialDates/{key} {
+      allow read: if true;
+    }
+    match /config/{docId} {
+      allow read: if true;
+    }
+    // adminAudit, and every other path, has no client access at all.
+  }
+}

@@ -38,5 +38,27 @@ jobs:
             packages/schema/coverage
             packages/local-db/coverage
             packages/observability/coverage
+            firebase/coverage
             apps/mobile/coverage
           retention-days: 90
+  rules:
+    # Security rules against the Firebase emulators (spec 17, 12.3). Needs Java for the emulators.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/firebase/emulators
+          key: firebase-emulators-${{ hashFiles('pnpm-lock.yaml') }}
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test:rules

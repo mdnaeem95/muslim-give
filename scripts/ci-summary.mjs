@@ -8,6 +8,7 @@ const packages = [
   'packages/schema',
   'packages/local-db',
   'packages/observability',
+  'firebase',
   'apps/mobile',
 ];
 const lines = ['### Test evidence', ''];

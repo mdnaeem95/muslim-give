@@ -1,0 +1,25 @@
+{
+  "name": "@muslim-give/firebase",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint .",
+    "test": "mkdir -p coverage && NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.mjs --json --outputFile=coverage/test-results.json",
+    "test:rules": "firebase emulators:exec --only firestore,storage --project demo-muslim-give \"NODE_OPTIONS=--experimental-vm-modules jest --config jest.rules.config.mjs\""
+  },
+  "dependencies": {
+    "@muslim-give/domain": "workspace:*"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "6.0.0",
+    "@types/jest": "30.0.0",
+    "@types/node": "22",
+    "firebase": "13.4.0",
+    "firebase-tools": "15.37.0",
+    "jest": "30.5.2",
+    "ts-jest": "29.4.15",
+    "typescript": "5.9"
+  }
+}
